@@ -153,3 +153,5 @@ fabric.properties
 .envrc
 
 *.sqlite3
+
+migrations/
