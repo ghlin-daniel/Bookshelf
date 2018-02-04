@@ -1,20 +1,25 @@
 {% extends 'base/base.html' %}
 
+{% block ref %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'books/index.css' %}" />
+{% endblock %}
+
 {% block content %}
     {% if books %}
-        <table style="width: 100%">
-            {% for book in books %}
-                {% if forloop.counter0|divisibleby:"6" %}<tr>{% endif %}
-                    <td style="text-align: center">
-                        <div>
-                            <img src="{{ book.image_url }}">
-                            <h4>{{ book.title }}</h4>
-                            <p>{{ book.authors }}</p>
-                        </div>
-                    </td>
-                {% if forloop.counter|divisibleby:"6" %}</tr>{% endif %}
-            {% endfor %}
-        </table>
+        {% for book in books %}
+            {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
+                <div class="card" id="book-card">
+                    <div class="card-header">
+                        <img id="book-img" src="{{ book.image_url }}">
+                    </div>
+                    <div class="card-body">
+                        <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                        <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
+                    </div>
+                </div>
+            {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+        {% endfor %}
     {% else %}
         <h1 style="text-align: center">No books?</h1>
     {% endif %}
