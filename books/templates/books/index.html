@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Bookshelf</title>
-</head>
-<body>
+{% extends 'base/base.html' %}
+
+{% block content %}
     {% if books %}
         <table style="width: 100%">
             {% for book in books %}
@@ -20,7 +16,6 @@
             {% endfor %}
         </table>
     {% else %}
-        <p>No books are available</p>
+        <h1 style="text-align: center">No books?</h1>
     {% endif %}
-</body>
-</html>
+{% endblock %}

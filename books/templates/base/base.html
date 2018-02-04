@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'base/base.css' %}" />
+    {% block ref %}{% endblock %}
+
+    <title>{% block title %}Bookshelf{% endblock %}</title>
+</head>
+<body>
+    <nav class="navbar fixed-top navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Bookshelf</a>
+    </nav>
+    <div class="container" id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
