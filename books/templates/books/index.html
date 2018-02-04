@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookshelf</title>
+</head>
+<body>
+    {% if books %}
+        <table style="width: 100%">
+            {% for book in books %}
+                {% if forloop.counter0|divisibleby:"6" %}<tr>{% endif %}
+                    <td style="text-align: center">
+                        <div>
+                            <img src="{{ book.image_url }}">
+                            <h4>{{ book.title }}</h4>
+                            <p>{{ book.authors }}</p>
+                        </div>
+                    </td>
+                {% if forloop.counter|divisibleby:"6" %}</tr>{% endif %}
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No books are available</p>
+    {% endif %}
+</body>
+</html>
