@@ -13,10 +13,14 @@
             {% for book in books %}
                 <tr>
                     <td width="10%">
-                        <img id="book-img" src="{{ book.image_url }}">
+                        <a href="{% url 'books:detail' book.isbn13 %}">
+                            <img id="book-img" src="{{ book.image_url }}">
+                        </a>
                     </td>
                     <td width="90%">
-                        <h6>{{ book.title }}</h6>
+                        <a href="{% url 'books:detail' book.isbn13 %}">
+                            <h6>{{ book.title }}</h6>
+                        </a>
                         <p>{{ book.authors }}</p>
                         <p>{{ book.description|truncatechars:200 }}</p>
                     </td>

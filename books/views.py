@@ -26,3 +26,11 @@ def search(request):
         books = query_set[(10 * (page - 1)):10 * page]
 
     return render(request, 'books/search.html', {'q': query, 'books': books, 'total': total, 'page': page})
+
+
+def detail(request, book_isbn13):
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+    except Book.DoesNotExist:
+        book = None
+    return render(request, 'books/detail.html', {'book': book})

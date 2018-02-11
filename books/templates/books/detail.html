@@ -1,0 +1,40 @@
+{% extends 'base/base.html' %}
+
+{% block ref %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'books/detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+    {% if book %}
+        <div class="row">
+            <div class="col">
+                <h2>{{ book.title }}</h2>
+                <h3>{{ book.subtitle }}</h3>
+                <p>Authors: {{ book.authors }}</p>
+                <p>Publisher: {{ book.publisher }}</p>
+                <p>
+                    <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#detail" aria-expanded="false" aria-controls="detail">
+                        Detail
+                    </button>
+                </p>
+                <div class="collapse" id="detail">
+                    <p>Published Date: {{ book.published_date }}</p>
+                    <p>ISBN: {{ book.isbn13 }}</p>
+                    <p>Pages: {{ book.page_count }}</p>
+                    <p>Language: {{ book.language }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="book-img-description">
+            <div class="col-2">
+                <img class="book-img" src="{{ book.image_url }}">
+            </div>
+            <div class="col-10">
+                <p>{{ book.description }}</p>
+            </div>
+        </div>
+    {% else %}
+        <h1 style="text-align: center">No this book</h1>
+    {% endif %}
+{% endblock %}

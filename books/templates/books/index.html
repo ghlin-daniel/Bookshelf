@@ -11,10 +11,14 @@
             {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
                 <div class="card" id="book-card">
                     <div class="card-header">
-                        <img id="book-img" src="{{ book.image_url }}">
+                        <a href="{% url 'books:detail' book.isbn13 %}">
+                            <img id="book-img" src="{{ book.image_url }}">
+                        </a>
                     </div>
                     <div class="card-body">
-                        <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                        <a href="{% url 'books:detail' book.isbn13 %}">
+                            <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                        </a>
                         <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
                     </div>
                 </div>
