@@ -24,14 +24,14 @@ def save(conn, books):
         if isbn10 == '' and isbn13 == '':
             continue
 
-        title = info.get('title', '').replace('"', '\\"')
-        subtitle = info.get('subtitle', '').replace('"', '\\"')
+        title = info.get('title', '')
+        subtitle = info.get('subtitle', '')
 
         authors = ', '.join(info.get('authors', ''))
 
         publisher = info.get('publisher', '')
         published_date = info.get('publishedDate', '')
-        description = info.get('description', '').replace('"', '\\"')
+        description = info.get('description', '')
         page_count = info.get('pageCount', 0)
 
         image_links = info.get('imageLinks', None)
