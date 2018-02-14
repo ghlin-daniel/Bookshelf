@@ -19,6 +19,8 @@ from django.urls import include, path
 from books import views
 
 urlpatterns = [
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
     path('books/', include('books.urls')),
     path('admin/', admin.site.urls),
     path('', views.index),

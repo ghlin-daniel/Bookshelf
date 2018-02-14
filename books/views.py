@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.contrib import auth
 
 from .models import Book
 
@@ -34,3 +36,30 @@ def detail(request, book_isbn13):
     except Book.DoesNotExist:
         book = None
     return render(request, 'books/detail.html', {'book': book})
+
+
+def login(request):
+    redirect = request.POST.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(redirect)
+
+    username = request.POST.get('username', '')
+    password = request.POST.get('password', '')
+
+    user = auth.authenticate(username=username, password=password)
+
+    if user is not None and user.is_active:
+        auth.login(request, user)
+
+    return HttpResponseRedirect(redirect)
+
+
+def logout(request):
+    auth.logout(request)
+    redirect = request.GET.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
+    return HttpResponseRedirect(redirect)
