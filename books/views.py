@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib import auth
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 
-from .models import Book
+from .models import Book, Reader
 
 
 def index(request):
@@ -63,3 +65,28 @@ def logout(request):
     if redirect == '':
         redirect = '/'
     return HttpResponseRedirect(redirect)
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    username = request.POST.get('username', '')
+    email = request.POST.get('email', '')
+    password = request.POST.get('password', '')
+    error = ''
+
+    if username != '' and email != '' and password != '':
+        try:
+            user = User.objects.create_user(username, email, password)
+
+            reader = Reader(user=user)
+            reader.save()
+
+            auth.login(request, user)
+
+            return HttpResponseRedirect('/')
+        except IntegrityError:
+            error = 'Please try another username'
+
+    return render(request, 'readers/register.html', {'error': error})
