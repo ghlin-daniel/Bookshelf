@@ -25,3 +25,11 @@ class Reader(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Bookshelf(models.Model):
+    reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("reader", "book")

@@ -4,7 +4,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 
-from .models import Book, Reader
+from .models import Book, Reader, Bookshelf
 
 
 def index(request):
@@ -37,7 +37,61 @@ def detail(request, book_isbn13):
         book = Book.objects.get(isbn13=book_isbn13)
     except Book.DoesNotExist:
         book = None
+
+    if request.user.is_authenticated and book is not None:
+        user = request.user
+        query_set = Bookshelf.objects.filter(reader__user=user).filter(book=book)
+        book.owned = query_set.count() > 0
+
     return render(request, 'books/detail.html', {'book': book})
+
+
+def add_book(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+    except Book.DoesNotExist:
+        book = None
+
+    if book is not None:
+        reader = Reader.objects.get(user__id=request.user.id)
+        if reader is not None:
+            try:
+                bookshelf = Bookshelf(reader=reader, book=book)
+                bookshelf.save()
+            except IntegrityError:
+                pass
+
+    return HttpResponseRedirect('/bookshelf')
+
+
+def remove_book(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+    except Book.DoesNotExist:
+        book = None
+
+    if book is not None:
+        reader = Reader.objects.get(user__id=request.user.id)
+        if reader is not None:
+            Bookshelf.objects.filter(reader=reader).filter(book=book).delete()
+
+    return HttpResponseRedirect('/bookshelf')
+
+
+def my_books(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    reader = Reader.objects.get(user__id=request.user.id)
+    books = Book.objects.filter(bookshelf__reader=reader)
+
+    return render(request, 'readers/my_books.html', {'books': books})
 
 
 def login(request):
