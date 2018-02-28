@@ -1,8 +1,6 @@
-Django==2.0.2
-argparse==1.4.0
 certifi==2018.1.18
 chardet==3.0.4
-django-bootstrap4==0.0.5
+Django==2.0.2
 idna==2.6
 pytz==2017.3
 requests==2.18.4
