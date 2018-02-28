@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.forms.models import model_to_dict
 
-from .models import Book, Reader, Bookshelf
+from django.core import serializers
+
+from .models import Book, Reader, Bookshelf, Reading
 
 
 def index(request):
@@ -82,6 +86,28 @@ def remove_book(request, book_isbn13):
             Bookshelf.objects.filter(reader=reader).filter(book=book).delete()
 
     return HttpResponseRedirect('/bookshelf')
+
+
+def reading(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+        readings = Reading.objects.filter(bookshelf__book=book).order_by('start_date')
+        readings = [{"start_date": r.start_date, "end_date": r.end_date} for r in readings]
+    except Book.DoesNotExist:
+        book = None
+        readings = None
+
+    data = {
+        'book': model_to_dict(book),
+        'readings': readings,
+    }
+
+    print(readings)
+
+    return JsonResponse(data)
 
 
 def my_books(request):

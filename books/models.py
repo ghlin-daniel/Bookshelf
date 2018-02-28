@@ -33,3 +33,16 @@ class Bookshelf(models.Model):
 
     class Meta:
         unique_together = ("reader", "book")
+
+    def __str__(self):
+        return self.reader.user.username + " has " + self.book.title
+
+
+class Reading(models.Model):
+    bookshelf = models.ForeignKey(Bookshelf, on_delete=models.CASCADE)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return self.bookshelf.reader.user.username + " read " + self.bookshelf.book.title + \
+               " from " + str(self.start_date) + " to " + str(self.end_date)

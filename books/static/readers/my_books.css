@@ -18,3 +18,8 @@
     font-size: 13px;
     height: 1rem;
 }
+
+#reading-date {
+    max-width: 7rem;
+    text-align: center;
+}

@@ -23,6 +23,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('books/', include('books.urls')),
+    path('bookshelf/<int:book_isbn13>/', views.reading, name='reading'),
     path('bookshelf/', views.my_books, name='bookshelf'),
     path('admin/', admin.site.urls),
     path('', views.index),
