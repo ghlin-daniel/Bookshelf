@@ -40,9 +40,19 @@ class Bookshelf(models.Model):
 
 class Reading(models.Model):
     bookshelf = models.ForeignKey(Bookshelf, on_delete=models.CASCADE)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    start_datetime = models.DateTimeField(blank=True, null=True)
+    end_datetime = models.DateTimeField(blank=True, null=True)
+
+    READING = 'R'
+    FINISHED = 'F'
+    ABANDONED = 'A'
+    PROGRESS_CHOICES = (
+        (READING, 'Reading'),
+        (FINISHED, 'Finished'),
+        (ABANDONED, 'Abandoned'),
+    )
+    progress = models.CharField(max_length=1, choices=PROGRESS_CHOICES, default=READING)
 
     def __str__(self):
         return self.bookshelf.reader.user.username + " read " + self.bookshelf.book.title + \
-               " from " + str(self.start_date) + " to " + str(self.end_date)
+               " from " + str(self.start_datetime) + " to " + str(self.end_datetime)

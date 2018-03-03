@@ -30,7 +30,7 @@
     {% endif %}
 
     <div class="modal fade" id="reading" tabindex="-1" role="dialog" aria-labelledby="reading-book-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="reading-book-title"></h5>
@@ -39,7 +39,26 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-hover" id="reading-list">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="reading-progress">
+                            <a class="dropdown-item" id="action-finish" href="#">Finish</a>
+                            <a class="dropdown-item" id="action-read" href="#">Read</a>
+                            <a class="dropdown-item" id="action-abandon" href="#">Abandon</a>
+                        </div>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Start</th>
+                                <th scope="col">End</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="reading-list">
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">

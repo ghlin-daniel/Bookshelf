@@ -1,27 +1,173 @@
-$(document).ready(function() {
-    $(".reading-link").click(function() {
-        var isbn13 = $(this).attr("book-isbn13");
+function clearViews() {
+    $("#reading-book-title").empty();
+    $("#reading-progress").text("");
+    $("#reading-list").empty();
+}
 
-        $("#reading-book-title").empty();
-        $("#reading-list").empty();
+function updateReadingList(isbn13, readings) {
+    var actionFinish = $("#action-finish");
+    var actionRead = $("#action-read");
+    var actionAbandon = $("#action-abandon")
 
-        $.ajax({
-            url: '/bookshelf/' + isbn13,
-            dataType: 'json',
-            success: function (response) {
-                if (response.book) {
-                    var book = response.book;
-                    $("#reading-book-title").text(book.title);
-                }
-                if (response.readings) {
-                    var readings = response.readings;
-                    for (var index in readings) {
-                        var from = "Start: <input id='reading-date' type='text' value='" + readings[index].start_date + "'>";
-                        var to = "End: <input id='reading-date' type='text' value='" + readings[index].end_date + "'>";
-                        $("#reading-list").append("<tr><td>" + from + " " + to + "</td></tr>");
-                    }
-                }
+    actionFinish.attr("book-isbn13", isbn13)
+    actionRead.attr("book-isbn13", isbn13)
+    actionAbandon.attr("book-isbn13", isbn13)
+
+    if (readings.length == 0) {
+        $("#reading-progress").text("Unread");
+        actionFinish.hide();
+        actionRead.show();
+        actionAbandon.hide();
+    }
+    else {
+        var latest = readings[0];
+        switch (latest.progress) {
+            case 'R':
+                $("#reading-progress").text("Reading");
+                actionFinish.show();
+                actionRead.hide();
+                actionAbandon.show();
+                break;
+
+            case 'F':
+                $("#reading-progress").text("Finished");
+                actionFinish.hide();
+                actionRead.show();
+                actionAbandon.hide();
+                break;
+
+            case 'A':
+                $("#reading-progress").text("Abandoned");
+                actionFinish.hide();
+                actionRead.show();
+                actionAbandon.hide();
+                break;
+        }
+    }
+
+    var statuses = {
+        "R": "Reading",
+        "F": "Finished",
+        "A": "Abandoned"
+    };
+
+    for (var index in readings) {
+        var reading = readings[index];
+        var from = "<td>" + reading.start_datetime.split("T")[0] + "</td>";
+        var isEnded = reading.end_datetime != null;
+        var to = "<td>" + (isEnded ? reading.end_datetime.split("T")[0] : "") + "</td>";
+        var progress = "<td>" + statuses[reading.progress] + "</td>";
+        var btnDelete = "<a class='btn btn-danger btn-sm delete-reading' reading-id='" + reading.id + "' book-isbn13='" + isbn13 + "' href='#'>Delete</a>";
+        $("#reading-list").append("<tr id='reading_" + index + "'>" + from + " " + to + progress + "<td>" + btnDelete + "</tr>");
+    }
+
+    $(".delete-reading").click(onDeleteClick);
+}
+
+function onDeleteClick() {
+    var readingId = $(this).attr("reading-id");
+    var isbn13 = $(this).attr("book-isbn13");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13 + "/" + readingId + "/delete",
+        dataType: 'json',
+        success: function(response) {
+            clearViews();
+
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
             }
-        });
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
     });
+}
+
+function onReadingLinkClick() {
+    clearViews();
+
+    var isbn13 = $(this).attr("book-isbn13");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13,
+        dataType: 'json',
+        success: function(response) {
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
+            }
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
+    });
+}
+
+function onActionReadClick() {
+    var isbn13 = $(this).attr("book-isbn13");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13 + '/read/',
+        dataType: 'json',
+        success: function(response) {
+            clearViews();
+
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
+            }
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
+    });
+}
+
+function onActionFinishClick() {
+    var isbn13 = $(this).attr("book-isbn13");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13 + '/finish/',
+        dataType: 'json',
+        success: function(response) {
+            clearViews();
+
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
+            }
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
+    });
+}
+
+function onActionAbandonClick() {
+    var isbn13 = $(this).attr("book-isbn13");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13 + '/abandon/',
+        dataType: 'json',
+        success: function(response) {
+            clearViews();
+
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
+            }
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
+    });
+}
+
+$(document).ready(function() {
+    $(".reading-link").click(onReadingLinkClick);
+    $("#action-read").click(onActionReadClick);
+    $("#action-finish").click(onActionFinishClick);
+    $("#action-abandon").click(onActionAbandonClick);
 });
