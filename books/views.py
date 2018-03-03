@@ -1,6 +1,13 @@
+from django.utils import timezone
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.http import JsonResponse
+from django.contrib import auth
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.forms.models import model_to_dict
 
-from .models import Book
+from .models import Book, Reader, Bookshelf, Reading
 
 
 def index(request):
@@ -33,4 +40,218 @@ def detail(request, book_isbn13):
         book = Book.objects.get(isbn13=book_isbn13)
     except Book.DoesNotExist:
         book = None
+
+    if request.user.is_authenticated and book is not None:
+        user = request.user
+        bookshelf_set = Bookshelf.objects.filter(reader__user=user).filter(book=book)
+        book.owned = bookshelf_set.count() == 1
+
     return render(request, 'books/detail.html', {'book': book})
+
+
+def add_book(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+    except Book.DoesNotExist:
+        book = None
+
+    if book is not None:
+        reader = Reader.objects.get(user__id=request.user.id)
+        if reader is not None:
+            try:
+                bookshelf = Bookshelf(reader=reader, book=book)
+                bookshelf.save()
+            except IntegrityError:
+                pass
+
+    return HttpResponseRedirect('/bookshelf')
+
+
+def remove_book(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+    except Book.DoesNotExist:
+        book = None
+
+    if book is not None:
+        reader = Reader.objects.get(user__id=request.user.id)
+        if reader is not None:
+            bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+            if bookshelf_set.count() == 1:
+                bookshelf_set.delete()
+
+    return HttpResponseRedirect('/bookshelf')
+
+
+def reading(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    try:
+        book = Book.objects.get(isbn13=book_isbn13)
+        reading_set = Reading.objects.filter(bookshelf__book=book).order_by('-start_datetime')
+        readings = [{"id": r.id, "start_datetime": r.start_datetime, "end_datetime": r.end_datetime, "progress": r.progress} for r in reading_set]
+    except Book.DoesNotExist:
+        book = None
+        readings = None
+
+    data = {
+        'book': model_to_dict(book),
+        'readings': readings,
+    }
+
+    return JsonResponse(data)
+
+
+def start_reading(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    bookshelf_set = None
+    try:
+        reader = Reader.objects.get(user__id=request.user.id)
+        book = Book.objects.get(isbn13=book_isbn13)
+        if reader is not None and book is not None:
+            bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+    except Book.DoesNotExist:
+        pass
+
+    if bookshelf_set is not None and bookshelf_set.count() == 1:
+        try:
+            new_reading = Reading(bookshelf=bookshelf_set[0], start_datetime=timezone.now(), end_datetime=None, progress='R')
+            new_reading.save()
+        except IntegrityError:
+            pass
+
+    return reading(request, book_isbn13)
+
+
+def abandon_reading(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    bookshelf_set = None
+    try:
+        reader = Reader.objects.get(user__id=request.user.id)
+        book = Book.objects.get(isbn13=book_isbn13)
+        if reader is not None and book is not None:
+            bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+    except Book.DoesNotExist:
+        pass
+
+    if bookshelf_set is not None and bookshelf_set.count() == 1:
+        reading_set = Reading.objects.filter(bookshelf=bookshelf_set[0], end_datetime=None).order_by('-start_datetime')
+        if reading_set.count() == 1:
+            reading_set.update(end_datetime=timezone.now(), progress='A')
+
+    return reading(request, book_isbn13)
+
+
+def finish_reading(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    bookshelf_set = None
+    try:
+        reader = Reader.objects.get(user__id=request.user.id)
+        book = Book.objects.get(isbn13=book_isbn13)
+        if reader is not None and book is not None:
+            bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+    except Book.DoesNotExist:
+        pass
+
+    if bookshelf_set is not None and bookshelf_set.count() == 1:
+        reading_set = Reading.objects.filter(bookshelf=bookshelf_set[0], end_datetime=None).order_by('-start_datetime')
+        if reading_set.count() == 1:
+            reading_set.update(end_datetime=timezone.now(), progress='F')
+
+    return reading(request, book_isbn13)
+
+
+def delete_reading(request, book_isbn13, reading_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    bookshelf_set = None
+    try:
+        reader = Reader.objects.get(user__id=request.user.id)
+        book = Book.objects.get(isbn13=book_isbn13)
+        if reader is not None and book is not None:
+            bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+    except Book.DoesNotExist:
+        pass
+
+    if bookshelf_set is not None and bookshelf_set.count() == 1:
+        reading_set = Reading.objects.filter(id=reading_id, bookshelf=bookshelf_set[0])
+        if reading_set.count() == 1:
+            reading_set.delete()
+
+    return reading(request, book_isbn13)
+
+
+def my_books(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    reader = Reader.objects.get(user__id=request.user.id)
+    books = Book.objects.filter(bookshelf__reader=reader)
+
+    return render(request, 'readers/my_books.html', {'books': books})
+
+
+def login(request):
+    redirect = request.POST.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(redirect)
+
+    username = request.POST.get('username', '')
+    password = request.POST.get('password', '')
+
+    user = auth.authenticate(username=username, password=password)
+
+    if user is not None and user.is_active:
+        auth.login(request, user)
+
+    return HttpResponseRedirect(redirect)
+
+
+def logout(request):
+    auth.logout(request)
+    redirect = request.GET.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
+    return HttpResponseRedirect(redirect)
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+
+    username = request.POST.get('username', '')
+    email = request.POST.get('email', '')
+    password = request.POST.get('password', '')
+    error = ''
+
+    if username != '' and email != '' and password != '':
+        try:
+            user = User.objects.create_user(username, email, password)
+
+            reader = Reader(user=user)
+            reader.save()
+
+            auth.login(request, user)
+
+            return HttpResponseRedirect('/')
+        except IntegrityError:
+            error = 'Please try another username'
+
+    return render(request, 'readers/register.html', {'error': error})

@@ -17,6 +17,13 @@
                     <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#detail" aria-expanded="false" aria-controls="detail">
                         Detail
                     </button>
+                    {% if request.user.is_authenticated %}
+                        {% if book.owned %}
+                            <a class="btn btn-primary btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
+                        {% else %}
+                            <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
+                        {% endif %}
+                    {% endif %}
                 </p>
                 <div class="collapse" id="detail">
                     <p>Published Date: {{ book.published_date }}</p>

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -17,3 +18,41 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Reader(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Bookshelf(models.Model):
+    reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("reader", "book")
+
+    def __str__(self):
+        return self.reader.user.username + " has " + self.book.title
+
+
+class Reading(models.Model):
+    bookshelf = models.ForeignKey(Bookshelf, on_delete=models.CASCADE)
+    start_datetime = models.DateTimeField(blank=True, null=True)
+    end_datetime = models.DateTimeField(blank=True, null=True)
+
+    READING = 'R'
+    FINISHED = 'F'
+    ABANDONED = 'A'
+    PROGRESS_CHOICES = (
+        (READING, 'Reading'),
+        (FINISHED, 'Finished'),
+        (ABANDONED, 'Abandoned'),
+    )
+    progress = models.CharField(max_length=1, choices=PROGRESS_CHOICES, default=READING)
+
+    def __str__(self):
+        return self.bookshelf.reader.user.username + " read " + self.bookshelf.book.title + \
+               " from " + str(self.start_datetime) + " to " + str(self.end_datetime)

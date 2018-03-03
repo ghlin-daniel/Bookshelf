@@ -1,0 +1,69 @@
+{% extends 'base/base.html' %}
+
+{% block ref %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'readers/my_books.css' %}" />
+    <script src="{% static 'readers/my_books.js'%}"></script>
+{% endblock %}
+
+{% block content %}
+    {% if books %}
+        {% for book in books %}
+            {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
+                <div class="card" id="book-card">
+                    <div class="card-header">
+                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading" book-isbn13="{{ book.isbn13 }}">
+                            <img id="book-img" src="{{ book.image_url }}">
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading" book-isbn13="{{ book.isbn13 }}">
+                            <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                        </a>
+                        <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
+                    </div>
+                </div>
+            {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+        {% endfor %}
+    {% else %}
+        <h1 style="text-align: center">You have no books</h1>
+    {% endif %}
+
+    <div class="modal fade" id="reading" tabindex="-1" role="dialog" aria-labelledby="reading-book-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reading-book-title"></h5>
+                    <button type="button" class="close" id="reading-close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="reading-progress">
+                            <a class="dropdown-item" id="action-finish" href="#">Finish</a>
+                            <a class="dropdown-item" id="action-read" href="#">Read</a>
+                            <a class="dropdown-item" id="action-abandon" href="#">Abandon</a>
+                        </div>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Start</th>
+                                <th scope="col">End</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="reading-list">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
