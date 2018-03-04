@@ -65,6 +65,8 @@ function updateReadingList(isbn13, readings) {
 }
 
 function onDeleteClick() {
+    if (!confirm("Are you sure to delete the reading?")) return;
+    
     var readingId = $(this).attr("reading-id");
     var isbn13 = $(this).attr("book-isbn13");
 
