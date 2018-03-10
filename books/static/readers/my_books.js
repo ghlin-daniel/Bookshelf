@@ -104,6 +104,8 @@ function checkDatePickers(row) {
 }
 
 function onDeleteClick() {
+    if (!confirm("Are you sure to delete the reading?")) return;
+
     var row = $(this).closest("tr");
     var readingId = row.attr("reading-id");
     var isbn13 = row.attr("book-isbn13");
@@ -186,6 +188,8 @@ function onReadingLinkClick() {
 }
 
 function onActionReadClick() {
+    if (!confirm("Are you sure to start reading this book?")) return;
+
     var isbn13 = $(this).attr("book-isbn13");
 
     $.ajax({
@@ -206,6 +210,8 @@ function onActionReadClick() {
 }
 
 function onActionFinishClick() {
+    if (!confirm("Are you sure to finish reading this book?")) return;
+
     var isbn13 = $(this).attr("book-isbn13");
 
     $.ajax({
@@ -226,6 +232,8 @@ function onActionFinishClick() {
 }
 
 function onActionAbandonClick() {
+    if (!confirm("Are you sure to give up reading this book?")) return;
+
     var isbn13 = $(this).attr("book-isbn13");
 
     $.ajax({
