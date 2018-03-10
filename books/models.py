@@ -40,8 +40,8 @@ class Bookshelf(models.Model):
 
 class Reading(models.Model):
     bookshelf = models.ForeignKey(Bookshelf, on_delete=models.CASCADE)
-    start_datetime = models.DateTimeField(blank=True, null=True)
-    end_datetime = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     READING = 'R'
     FINISHED = 'F'
@@ -55,4 +55,4 @@ class Reading(models.Model):
 
     def __str__(self):
         return self.bookshelf.reader.user.username + " read " + self.bookshelf.book.title + \
-               " from " + str(self.start_datetime) + " to " + str(self.end_datetime)
+               " from " + str(self.start_date) + " to " + str(self.end_date)

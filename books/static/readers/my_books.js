@@ -53,26 +53,106 @@ function updateReadingList(isbn13, readings) {
 
     for (var index in readings) {
         var reading = readings[index];
-        var from = "<td>" + reading.start_datetime.split("T")[0] + "</td>";
-        var isEnded = reading.end_datetime != null;
-        var to = "<td>" + (isEnded ? reading.end_datetime.split("T")[0] : "") + "</td>";
-        var progress = "<td>" + statuses[reading.progress] + "</td>";
-        var btnDelete = "<a class='btn btn-danger btn-sm delete-reading' reading-id='" + reading.id + "' book-isbn13='" + isbn13 + "' href='#'>Delete</a>";
-        $("#reading-list").append("<tr id='reading_" + index + "'>" + from + " " + to + progress + "<td>" + btnDelete + "</tr>");
+        var from = "<td><input class='form-control form-control-sm reading-date reading-date-from' type='text' readonly value='" + reading.start_date + "'></td>";
+        var isEnded = reading.end_date != null;
+        var to = "<td><input class='form-control form-control-sm reading-date reading-date-to' type='text' readonly " + (isEnded ? "" : "hidden ") + "value='" + (isEnded ? reading.end_date : "") + "'></td>";
+        var progress = "<td class='align-middle'>" + statuses[reading.progress] + "</td>";
+        var btnDelete = "<td><a class='btn btn-danger btn-sm delete-reading' href='#'>Delete</a></td>";
+        var btnSave = "<td><a class='btn btn-primary btn-sm save-reading' href='#'>Save</a></td>";
+        $("#reading-list").append("<tr reading-id='" + reading.id + "' book-isbn13='" + isbn13 + "'>" + from + " " + to + progress + btnDelete + btnSave + "</tr>");
     }
 
+    $("tr").each(function() {
+        checkDatePickers($(this));
+    });
+
     $(".delete-reading").click(onDeleteClick);
+    $(".save-reading").hide();
+    $(".save-reading").click(onSaveClick);
+}
+
+function checkDatePickers(row) {
+    var inputDateFrom = row.find(".reading-date-from");
+    var inputDateTo = row.find(".reading-date-to");
+    var dateFrom = inputDateFrom.attr("value");
+    var dateTo = inputDateTo.attr("value");
+
+    var onDateSelect = function(dateText, inst) {
+        var oldValue = $(this).attr("value");
+        if (oldValue == dateText) return;
+
+        $(this).attr("value", dateText);
+        var readingRow = $(this).closest("tr");
+        var btnSave = readingRow.find(".save-reading");
+        btnSave.show("normal");
+        checkDatePickers(readingRow);
+    };
+
+    inputDateFrom.datepicker("destroy");
+    inputDateFrom.datepicker({
+        dateFormat: 'yy-mm-dd',
+        maxDate: dateTo,
+        onSelect: onDateSelect,
+    });
+
+    inputDateTo.datepicker("destroy");
+    inputDateTo.datepicker({
+        dateFormat: 'yy-mm-dd',
+        minDate: dateFrom,
+        onSelect: onDateSelect,
+    });
 }
 
 function onDeleteClick() {
     if (!confirm("Are you sure to delete the reading?")) return;
 
-    var readingId = $(this).attr("reading-id");
-    var isbn13 = $(this).attr("book-isbn13");
+    var row = $(this).closest("tr");
+    var readingId = row.attr("reading-id");
+    var isbn13 = row.attr("book-isbn13");
 
     $.ajax({
-        url: '/bookshelf/' + isbn13 + "/" + readingId + "/delete",
+        url: '/bookshelf/' + isbn13 + "/delete/",
+        data: { "reading-id": readingId },
         dataType: 'json',
+        type: 'POST',
+        beforeSend: function(xhr, settings) {
+            if (!this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+            }
+        },
+        success: function(response) {
+            clearViews();
+
+            if (response.book) {
+                var book = response.book;
+                $("#reading-book-title").text(book.title);
+            }
+            if (response.readings) {
+                updateReadingList(isbn13, response.readings);
+            }
+        }
+    });
+}
+
+function onSaveClick() {
+    var row = $(this).closest("tr");
+    var readingId = row.attr("reading-id");
+    var isbn13 = row.attr("book-isbn13");
+    var inputDateFrom = row.find(".reading-date-from");
+    var inputDateTo = row.find(".reading-date-to");
+    var dateFrom = inputDateFrom.attr("value");
+    var dateTo = inputDateTo.attr("value");
+
+    $.ajax({
+        url: '/bookshelf/' + isbn13 + "/update/",
+        data: { "reading-id": readingId, "start-date": dateFrom, "end-date": dateTo },
+        dataType: 'json',
+        type: 'POST',
+        beforeSend: function(xhr, settings) {
+            if (!this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+            }
+        },
         success: function(response) {
             clearViews();
 
