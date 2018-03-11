@@ -1,4 +1,5 @@
 import datetime
+import isbnlib
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
@@ -6,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 from .models import Book, Reader, Bookshelf, Reading
 
@@ -23,6 +25,18 @@ def search(request):
     query = request.POST.get('q', '')
     if query == '' and 'q' in request.GET:
         query = request.GET.get('q', '')
+
+    if isbnlib.is_isbn10(query) or isbnlib.is_isbn13(query):
+        try:
+            book = Book.objects.get(Q(isbn10=query) | Q(isbn13=query))
+            if request.user.is_authenticated:
+                user = request.user
+                bookshelf_set = Bookshelf.objects.filter(reader__user=user).filter(book=book)
+                book.owned = bookshelf_set.count() == 1
+
+            return render(request, 'books/detail.html', {'book': book})
+        except Book.DoesNotExist:
+            pass
 
     books = []
     total = 0
