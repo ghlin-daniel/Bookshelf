@@ -2,6 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class Reader(models.Model):
+    user = models.OneToOneField(User, on_delete=models.PROTECT, unique=True)
+
+    def __str__(self):
+        return self.user.username
+
+
 class Book(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=200, blank=True)
@@ -20,16 +27,9 @@ class Book(models.Model):
         return self.title
 
 
-class Reader(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-
-    def __str__(self):
-        return self.user.username
-
-
 class Bookshelf(models.Model):
-    reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    reader = models.ForeignKey(Reader, on_delete=models.PROTECT)
+    book = models.ForeignKey(Book, on_delete=models.PROTECT)
 
     class Meta:
         unique_together = ("reader", "book")
