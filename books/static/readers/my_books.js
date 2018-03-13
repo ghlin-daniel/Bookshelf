@@ -135,6 +135,8 @@ function onDeleteClick() {
 }
 
 function onSaveClick() {
+    if (!confirm("Are you sure to update the reading?")) return;
+
     var row = $(this).closest("tr");
     var readingId = row.attr("reading-id");
     var isbn13 = row.attr("book-isbn13");
