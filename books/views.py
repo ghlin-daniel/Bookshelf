@@ -132,7 +132,7 @@ def update_reading(request, book_isbn13):
     end_date = request.POST.get('end-date', '')
 
     new_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-    new_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    new_end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d') if end_date != '' else None
 
     bookshelf_set = None
     try:
