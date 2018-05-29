@@ -154,5 +154,6 @@ fabric.properties
 .envrc
 
 *.sqlite3
-
 migrations/
+static/
+secret.yaml
