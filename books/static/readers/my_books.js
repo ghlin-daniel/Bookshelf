@@ -4,14 +4,11 @@ function clearViews() {
     $("#reading-list").empty();
 }
 
-function updateReadingList(isbn13, readings) {
+function updateReadingList(readings) {
     var actionFinish = $("#action-finish");
     var actionRead = $("#action-read");
-    var actionAbandon = $("#action-abandon")
-
-    actionFinish.attr("book-isbn13", isbn13)
-    actionRead.attr("book-isbn13", isbn13)
-    actionAbandon.attr("book-isbn13", isbn13)
+    var actionAbandon = $("#action-abandon");
+    var actionRemoveBook = $("#action-remove-book");
 
     if (readings.length == 0) {
         $("#reading-progress").text("Unread");
@@ -59,7 +56,7 @@ function updateReadingList(isbn13, readings) {
         var progress = "<td class='align-middle'>" + statuses[reading.progress] + "</td>";
         var btnDelete = "<td><a class='btn btn-danger btn-sm delete-reading' href='#'>Delete</a></td>";
         var btnSave = "<td><a class='btn btn-primary btn-sm save-reading' href='#'>Save</a></td>";
-        $("#reading-list").append("<tr reading-id='" + reading.id + "' book-isbn13='" + isbn13 + "'>" + from + " " + to + progress + btnDelete + btnSave + "</tr>");
+        $("#reading-list").append("<tr reading-id='" + reading.id + "'>" + from + " " + to + progress + btnDelete + btnSave + "</tr>");
     }
 
     $("tr").each(function() {
@@ -108,7 +105,8 @@ function onDeleteClick() {
 
     var row = $(this).closest("tr");
     var readingId = row.attr("reading-id");
-    var isbn13 = row.attr("book-isbn13");
+
+    var isbn13 = $("#reading-dialog").attr("book-isbn13");
 
     $.ajax({
         url: '/bookshelf/' + isbn13 + "/delete/",
@@ -128,7 +126,7 @@ function onDeleteClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
@@ -139,11 +137,12 @@ function onSaveClick() {
 
     var row = $(this).closest("tr");
     var readingId = row.attr("reading-id");
-    var isbn13 = row.attr("book-isbn13");
     var inputDateFrom = row.find(".reading-date-from");
     var inputDateTo = row.find(".reading-date-to");
     var dateFrom = inputDateFrom.attr("value");
     var dateTo = inputDateTo.attr("value");
+
+    var isbn13 = $("#reading-dialog").attr("book-isbn13");
 
     $.ajax({
         url: '/bookshelf/' + isbn13 + "/update/",
@@ -163,7 +162,7 @@ function onSaveClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
@@ -173,6 +172,11 @@ function onReadingLinkClick() {
     clearViews();
 
     var isbn13 = $(this).attr("book-isbn13");
+    var removeUrl = $(this).attr("remove-url");
+
+    var readingDialog = $("#reading-dialog");
+    readingDialog.attr("book-isbn13", isbn13);
+    readingDialog.attr("remove-url", removeUrl);
 
     $.ajax({
         url: '/bookshelf/' + isbn13,
@@ -183,7 +187,7 @@ function onReadingLinkClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
@@ -192,7 +196,7 @@ function onReadingLinkClick() {
 function onActionReadClick() {
     if (!confirm("Are you sure to start reading this book?")) return;
 
-    var isbn13 = $(this).attr("book-isbn13");
+    var isbn13 = $("#reading-dialog").attr("book-isbn13");
 
     $.ajax({
         url: '/bookshelf/' + isbn13 + '/read/',
@@ -205,7 +209,7 @@ function onActionReadClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
@@ -214,7 +218,7 @@ function onActionReadClick() {
 function onActionFinishClick() {
     if (!confirm("Are you sure to finish reading this book?")) return;
 
-    var isbn13 = $(this).attr("book-isbn13");
+    var isbn13 = $("#reading-dialog").attr("book-isbn13");
 
     $.ajax({
         url: '/bookshelf/' + isbn13 + '/finish/',
@@ -227,7 +231,7 @@ function onActionFinishClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
@@ -236,7 +240,7 @@ function onActionFinishClick() {
 function onActionAbandonClick() {
     if (!confirm("Are you sure to give up reading this book?")) return;
 
-    var isbn13 = $(this).attr("book-isbn13");
+    var isbn13 = $("#reading-dialog").attr("book-isbn13");
 
     $.ajax({
         url: '/bookshelf/' + isbn13 + '/abandon/',
@@ -249,10 +253,17 @@ function onActionAbandonClick() {
                 $("#reading-book-title").text(book.title);
             }
             if (response.readings) {
-                updateReadingList(isbn13, response.readings);
+                updateReadingList(response.readings);
             }
         }
     });
+}
+
+function onActionRemoveBookClick() {
+    if (!confirm("Are you sure to remove this book from your bookshelf?")) return;
+
+    var removeUrl = $("#reading-dialog").attr("remove-url");
+    location.href = removeUrl
 }
 
 $(document).ready(function() {
@@ -260,4 +271,5 @@ $(document).ready(function() {
     $("#action-read").click(onActionReadClick);
     $("#action-finish").click(onActionFinishClick);
     $("#action-abandon").click(onActionAbandonClick);
+    $("#action-remove-book").click(onActionRemoveBookClick);
 });

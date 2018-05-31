@@ -13,12 +13,12 @@
             {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
                 <div class="card" id="book-card">
                     <div class="card-header">
-                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading" book-isbn13="{{ book.isbn13 }}">
+                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}">
                             <img id="book-img" src="{{ book.image_url }}">
                         </a>
                     </div>
                     <div class="card-body">
-                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading" book-isbn13="{{ book.isbn13 }}">
+                        <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}">
                             <p id="book-title">{{ book.title|truncatechars:25 }}</p>
                         </a>
                         <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
@@ -30,7 +30,7 @@
         <h1 style="text-align: center">You have no books</h1>
     {% endif %}
 
-    <div class="modal fade" id="reading" tabindex="-1" role="dialog" aria-labelledby="reading-book-title" aria-hidden="true">
+    <div class="modal fade" id="reading-dialog" tabindex="-1" role="dialog" aria-labelledby="reading-book-title" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -62,7 +62,10 @@
                         <tbody id="reading-list"></tbody>
                     </table>
                 </div>
-                <div class="modal-footer"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger mr-auto" id="action-remove-book">Remove</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
