@@ -13,15 +13,14 @@
                 <div class="media-body">
                     <h3 class="mt-0">{{ book.title }}</h3>
                     <h5 class="mt-0">{{ book.subtitle }}</h5>
-                    <p>Authors: {{ book.authors }}</p>
-                    <p>Publisher: {{ book.publisher }}</p>
-                    <p>ISBN: {{ book.isbn13 }}</p>
-                    <p>Pages: {{ book.page_count }}</p>
-                    <p>Language: {{ book.language }}</p>
+                    <p class="mt-0">Authors: {{ book.authors }}</p>
+                    <p class="mt-0">Publisher: {{ book.publisher }}</p>
+                    <p class="mt-0">ISBN: {{ book.isbn13 }}</p>
+                    <p class="mt-0">Pages: {{ book.page_count }}</p>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-3">
             <p>
                 {% if request.user.is_authenticated %}
                     {% if book.owned %}
