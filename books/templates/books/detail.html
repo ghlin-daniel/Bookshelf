@@ -8,38 +8,29 @@
 {% block content %}
     {% if book %}
         <div class="row">
-            <div class="col">
-                <h2>{{ book.title }}</h2>
-                <h3>{{ book.subtitle }}</h3>
-                <p>Authors: {{ book.authors }}</p>
-                <p>Publisher: {{ book.publisher }}</p>
-                <p>
-                    <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#detail" aria-expanded="false" aria-controls="detail">
-                        Detail
-                    </button>
-                    {% if request.user.is_authenticated %}
-                        {% if book.owned %}
-                            <a class="btn btn-primary btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
-                        {% else %}
-                            <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
-                        {% endif %}
-                    {% endif %}
-                </p>
-                <div class="collapse" id="detail">
-                    <p>Published Date: {{ book.published_date }}</p>
+            <div class="media">
+                <img class="mr-3" id="book-img" src="{{ book.image_url }}" alt="Generic placeholder image">
+                <div class="media-body">
+                    <h3 class="mt-0">{{ book.title }}</h3>
+                    <h5 class="mt-0">{{ book.subtitle }}</h5>
+                    <p>Authors: {{ book.authors }}</p>
+                    <p>Publisher: {{ book.publisher }}</p>
                     <p>ISBN: {{ book.isbn13 }}</p>
                     <p>Pages: {{ book.page_count }}</p>
                     <p>Language: {{ book.language }}</p>
                 </div>
             </div>
         </div>
-        <div class="row" id="book-img-description">
-            <div class="col-2">
-                <img class="book-img" src="{{ book.image_url }}">
-            </div>
-            <div class="col-10">
-                <p>{{ book.description }}</p>
-            </div>
+        <div class="row">
+            <p>
+                {% if request.user.is_authenticated %}
+                    {% if book.owned %}
+                        <a class="btn btn-primary btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
+                    {% else %}
+                        <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
+                    {% endif %}
+                {% endif %}
+            </p>
         </div>
     {% else %}
         <h1 style="text-align: center">No this book</h1>
