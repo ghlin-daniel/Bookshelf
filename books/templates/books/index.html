@@ -1,30 +1,30 @@
 {% extends 'base/base.html' %}
 
 {% block ref %}
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'books/index.css' %}" />
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'books/index.css' %}" />
 {% endblock %}
 
 {% block content %}
-    {% if books %}
-        {% for book in books %}
-            {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
-                <div class="card" id="book-card">
-                    <div class="card-header">
-                        <a href="{% url 'books:detail' book.isbn13 %}">
-                            <img id="book-img" src="{{ book.image_url }}">
-                        </a>
-                    </div>
-                    <div class="card-body">
-                        <a href="{% url 'books:detail' book.isbn13 %}">
-                            <p id="book-title">{{ book.title|truncatechars:25 }}</p>
-                        </a>
-                        <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
-                    </div>
-                </div>
-            {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
-        {% endfor %}
-    {% else %}
-        <h1 style="text-align: center">No books?</h1>
-    {% endif %}
+  {% if books %}
+    {% for book in books %}
+      {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
+      <div class="card" id="book-card">
+        <div class="card-header">
+          <a href="{% url 'books:detail' book.isbn13 %}">
+            <img id="book-img" src="{{ book.image_url }}">
+          </a>
+        </div>
+        <div class="card-body">
+          <a href="{% url 'books:detail' book.isbn13 %}">
+            <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+          </a>
+          <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
+        </div>
+      </div>
+      {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+    {% endfor %}
+  {% else %}
+    <h1 style="text-align: center">No books?</h1>
+  {% endif %}
 {% endblock %}

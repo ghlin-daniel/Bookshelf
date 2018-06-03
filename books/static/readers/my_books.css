@@ -1,29 +1,29 @@
 #book-card {
-    max-width: 10rem;
+  max-width: 10rem;
 }
 
 #book-img {
-    width: auto;
-    height: 8rem;
-    display: block;
-    margin: 0 auto;
+  width: auto;
+  height: 8rem;
+  display: block;
+  margin: 0 auto;
 }
 
 #book-title {
-    font-size: 13px;
-    height: 3rem;
+  font-size: 13px;
+  height: 3rem;
 }
 
 #book-authors {
-    font-size: 13px;
-    height: 1rem;
+  font-size: 13px;
+  height: 1rem;
 }
 
 #reading-progress {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .reading-date {
-    max-width: 10rem;
-    text-align: center;
+  max-width: 10rem;
+  text-align: center;
 }
