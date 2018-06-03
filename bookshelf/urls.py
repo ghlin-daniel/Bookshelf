@@ -18,8 +18,9 @@ from django.urls import include, path
 
 from books import views
 
+from .settings import DEBUG
+
 urlpatterns = [
-  path('register/', views.register, name='register'),
   path('login/', views.login, name='login'),
   path('logout/', views.logout, name='logout'),
   path('books/', include('books.urls')),
@@ -30,6 +31,9 @@ urlpatterns = [
   path('bookshelf/<int:book_isbn13>/finish/', views.finish_reading, name='finish_reading'),
   path('bookshelf/<int:book_isbn13>/', views.reading, name='reading'),
   path('bookshelf/', views.my_books, name='bookshelf'),
-  path('admin/', admin.site.urls),
   path('', views.index),
 ]
+
+if DEBUG:
+    urlpatterns.append(path('register/', views.register, name='register'))
+    urlpatterns.append(path('admin/', admin.site.urls))

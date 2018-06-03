@@ -42,7 +42,9 @@
                  <button type="submit" class="btn btn-primary">Sign in</button>
               </form>
             </div>
-            <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+            {% if debug %}
+              <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+            {% endif %}
           {% endif %}
         </div>
       </div>
