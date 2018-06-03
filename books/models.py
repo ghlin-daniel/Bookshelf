@@ -15,6 +15,8 @@ class Book(models.Model):
     image_url = models.URLField(blank=True)
     language = models.CharField(max_length=10, blank=True)
     added_date = models.DateField(blank=True, null=True)
+    verified = models.BooleanField(default=False)
+    verified_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.title

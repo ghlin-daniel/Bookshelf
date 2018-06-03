@@ -13,7 +13,7 @@ from .models import Book, Reader, Bookshelf, Reading
 
 
 def index(request):
-    books = Book.objects.order_by('-added_date')[:30]
+    books = Book.objects.filter(verified=True).order_by('-added_date')[:30]
     return render(request, 'books/index.html', {'books': books})
 
 
@@ -28,7 +28,7 @@ def search(request):
 
     if isbnlib.is_isbn10(query) or isbnlib.is_isbn13(query):
         try:
-            book = Book.objects.get(Q(isbn10=query) | Q(isbn13=query))
+            book = Book.objects.filter(verified=True).get(Q(isbn10=query) | Q(isbn13=query))
             if request.user.is_authenticated:
                 user = request.user
                 bookshelf_set = Bookshelf.objects.filter(reader__user=user).filter(book=book)
@@ -42,7 +42,7 @@ def search(request):
     total = 0
 
     if query != '':
-        query_set = Book.objects.filter(title__icontains=query).order_by('-added_date')
+        query_set = Book.objects.filter(title__icontains=query).filter(verified=True).order_by('-added_date')
         total = query_set.count()
         books = query_set[(10 * (page - 1)):10 * page]
 
@@ -51,7 +51,7 @@ def search(request):
 
 def detail(request, book_isbn13):
     try:
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
     except Book.DoesNotExist:
         book = None
 
@@ -68,7 +68,7 @@ def add_book(request, book_isbn13):
         return HttpResponseRedirect('/')
 
     try:
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
     except Book.DoesNotExist:
         book = None
 
@@ -89,7 +89,7 @@ def remove_book(request, book_isbn13):
         return HttpResponseRedirect('/')
 
     try:
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
     except Book.DoesNotExist:
         book = None
 
@@ -108,7 +108,7 @@ def reading(request, book_isbn13):
         return JsonResponse({'error': 'Please login first'})
 
     try:
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         reading_set = Reading.objects.filter(bookshelf__book=book).order_by('-id')
         readings = [{"id": r.id, "start_date": r.start_date, "end_date": r.end_date, "progress": r.progress} for r in reading_set]
     except Book.DoesNotExist:
@@ -137,7 +137,7 @@ def update_reading(request, book_isbn13):
     bookshelf_set = None
     try:
         reader = Reader.objects.get(user__id=request.user.id)
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         if reader is not None and book is not None:
             bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
     except Book.DoesNotExist:
@@ -158,7 +158,7 @@ def start_reading(request, book_isbn13):
     bookshelf_set = None
     try:
         reader = Reader.objects.get(user__id=request.user.id)
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         if reader is not None and book is not None:
             bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
     except Book.DoesNotExist:
@@ -181,7 +181,7 @@ def abandon_reading(request, book_isbn13):
     bookshelf_set = None
     try:
         reader = Reader.objects.get(user__id=request.user.id)
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         if reader is not None and book is not None:
             bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
     except Book.DoesNotExist:
@@ -202,7 +202,7 @@ def finish_reading(request, book_isbn13):
     bookshelf_set = None
     try:
         reader = Reader.objects.get(user__id=request.user.id)
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         if reader is not None and book is not None:
             bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
     except Book.DoesNotExist:
@@ -225,7 +225,7 @@ def delete_reading(request, book_isbn13):
     bookshelf_set = None
     try:
         reader = Reader.objects.get(user__id=request.user.id)
-        book = Book.objects.get(isbn13=book_isbn13)
+        book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         if reader is not None and book is not None:
             bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
     except Book.DoesNotExist:
@@ -244,7 +244,7 @@ def my_books(request):
         return HttpResponseRedirect('/')
 
     reader = Reader.objects.get(user__id=request.user.id)
-    books = Book.objects.filter(bookshelf__reader=reader)
+    books = Book.objects.filter(verified=True).filter(bookshelf__reader=reader)
 
     return render(request, 'readers/my_books.html', {'books': books})
 
