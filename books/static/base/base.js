@@ -5,7 +5,7 @@ function clearViews() {
 }
 
 function disableViews(disabled) {
-  $(".btn").prop("disabled", disabled);
+  $(".dialog-btn").prop("disabled", disabled);
   $(".reading-date-from").prop("disabled", disabled);
   $(".reading-date-to").prop("disabled", disabled);
 }
@@ -56,12 +56,12 @@ function updateReadingList(readings) {
 
   for (var index in readings) {
     var reading = readings[index];
-    var from = "<td><input class='form-control form-control-sm reading-date-from' type='text' readonly value='" + reading.start_date + "'></td>";
+    var from = "<td><input class='form-control form-control-sm reading-date reading-date-from' type='text' readonly value='" + reading.start_date + "'></td>";
     var isEnded = reading.end_date != null;
-    var to = "<td><input class='form-control form-control-sm reading-date-to' type='text' readonly " + (isEnded ? "" : "hidden ") + "value='" + (isEnded ? reading.end_date : "") + "'></td>";
+    var to = "<td><input class='form-control form-control-sm reading-date reading-date-to' type='text' readonly " + (isEnded ? "" : "hidden ") + "value='" + (isEnded ? reading.end_date : "") + "'></td>";
     var progress = "<td class='align-middle'>" + statuses[reading.progress] + "</td>";
-    var btnDelete = "<td><button class='btn btn-danger btn-sm delete-reading' href='#'>Delete</a></td>";
-    var btnSave = "<td><button class='btn btn-primary btn-sm save-reading' href='#'>Save</a></td>";
+    var btnDelete = "<td><button class='btn btn-danger btn-sm delete-reading dialog-btn' href='#'>Delete</a></td>";
+    var btnSave = "<td><button class='btn btn-primary btn-sm save-reading dialog-btn' href='#'>Save</a></td>";
     $("#reading-list").append("<tr reading-id='" + reading.id + "'>" + from + " " + to + progress + btnDelete + btnSave + "</tr>");
   }
 
