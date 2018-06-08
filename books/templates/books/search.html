@@ -19,9 +19,9 @@
           </td>
           <td width="90%">
             <a href="{% url 'books:detail' book.isbn13 %}">
-              <h6>{{ book.title }}</h6>
+              <p id="book-title">{{ book.title }}</p>
             </a>
-            <p>{{ book.authors }}</p>
+            <p id="book-authors">{{ book.authors }}</p>
             <p>{{ book.description|truncatechars:200 }}</p>
           </td>
         </tr>

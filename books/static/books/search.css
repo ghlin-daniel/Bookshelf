@@ -1,6 +1,16 @@
 #book-img {
   width: auto;
-  height: 8rem;
+  height: 6rem;
   display: block;
   margin: 0 auto;
+}
+
+#book-title {
+  font-size: 15px;
+  height: 3rem;
+}
+
+#book-authors {
+  font-size: 12px;
+  height: 1rem;
 }
