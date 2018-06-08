@@ -3,8 +3,17 @@ import sqlite3
 import argparse
 from fetcher import fetcher
 
+import environ
+import psycopg2
 
-def save(conn, books):
+root = environ.Path(__file__) - 3
+base_path = root()
+env = environ.Env(DEBUG=(bool, False),)
+env_path = base_path + '/.envrc'
+environ.Env.read_env(env_path)
+
+
+def save(db, conn, books):
     count = 0
     for book in books:
         info = book.get('volumeInfo', None)
@@ -31,7 +40,7 @@ def save(conn, books):
 
         publisher = info.get('publisher', '')
         published_date = info.get('publishedDate', '')
-        description = info.get('description', '')
+        description = ''  # info.get('description', '')
         page_count = info.get('pageCount', 0)
 
         image_links = info.get('imageLinks', None)
@@ -43,16 +52,34 @@ def save(conn, books):
 
         added_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
-        insert = '''INSERT INTO books_book (
-            title, subtitle, authors, publisher, published_date, description, isbn10, isbn13, page_count,
-            image_url, language, added_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?)'''
-        try:
-            conn.execute(insert,
-                         (title, subtitle, authors, publisher, published_date, description,
-                          isbn10, isbn13, page_count, image_url, language, added_date))
-            conn.commit()
-            count += 1
-        except sqlite3.IntegrityError:
+        if db == "psql":
+            insert = '''INSERT INTO books_book (
+                        title, subtitle, authors, publisher, published_date, description, isbn10, isbn13, page_count,
+                        image_url, language, added_date, verified, verified_date)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+            try:
+                cur = conn.cursor()
+                cur.execute(insert, (title, subtitle, authors, publisher, published_date, description,
+                                     isbn10, isbn13, page_count, image_url, language, added_date, False, None))
+                conn.commit()
+                count += 1
+            except (psycopg2.IntegrityError, psycopg2.DataError):
+                conn.rollback()
+                pass
+        elif db == "sqlite":
+            insert = '''INSERT INTO books_book (
+                        title, subtitle, authors, publisher, published_date, description, isbn10, isbn13, page_count,
+                        image_url, language, added_date, verified, verified_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+            try:
+                conn.execute(insert,
+                             (title, subtitle, authors, publisher, published_date, description,
+                              isbn10, isbn13, page_count, image_url, language, added_date, False, None))
+                conn.commit()
+                count += 1
+            except sqlite3.IntegrityError:
+                pass
+        else:
             pass
 
     return count
@@ -60,16 +87,26 @@ def save(conn, books):
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("q", help="Query string")
-    parser.add_argument("d", help="Database path")
+    parser.add_argument("query", help="Query string")
+    parser.add_argument("-d", "--database", help="Database", default="sqlite")
     args = parser.parse_args()
-    return args.q, args.d
+    return args.query, args.database
 
 
 def main():
-    query, db_path = get_arguments()
+    query, db = get_arguments()
 
-    conn = sqlite3.connect(db_path)
+    if db == "psql":
+        conn = psycopg2.connect(
+            database=env("DATABASE_NAME"),
+            user=env("DATABASE_USER"),
+            host=env("DATABASE_URL"),
+            password=env("DATABASE_PASSWORD"))
+    elif db == "sqlite":
+        sqlite_path = base_path + "/" + env("SQLITE_NAME")
+        conn = sqlite3.connect(sqlite_path)
+    else:
+        return
 
     total = 0
     count_fetched = 0
@@ -81,7 +118,7 @@ def main():
         if books is None:
             break
 
-        count_inserted += save(conn, books)
+        count_inserted += save(db, conn, books)
         total = data.get('totalItems', 0)
         count_fetched += len(books)
         print(str(count_fetched) + ' / ' + str(total))

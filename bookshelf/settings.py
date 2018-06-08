@@ -86,6 +86,10 @@ DATABASES = {
         'PASSWORD': env('DATABASE_PASSWORD'),
         'PORT': env('DATABASE_PORT'),
     },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR + '/' + env('SQLITE_NAME'),
+    # }
 }
 
 # Password validation
