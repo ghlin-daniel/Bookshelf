@@ -16,3 +16,15 @@
   max-width: 10rem;
   text-align: center;
 }
+
+.reading-list-table {
+  table-layout: fixed;
+}
+
+.reading-list-column {
+  overflow: hidden;
+}
+
+.reading-list-header {
+  overflow: hidden;
+}
