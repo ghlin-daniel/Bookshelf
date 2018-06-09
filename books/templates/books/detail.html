@@ -12,8 +12,9 @@
         <div class="media">
           <img class="mr-3" id="book-img" src="{{ book.image_url }}" alt="Generic placeholder image">
           <div class="media-body">
-            <h4 class="mt-0">{{ book.title }}</h4>
-            <h5 class="mt-0">{{ book.subtitle }}</h5>
+            <h5 class="mt-0">{{ book.title }}</h5>
+            <h6 class="mt-0">{{ book.subtitle }}</h6>
+            <hr id="detail-line" />
             <p class="mt-0">Authors: {{ book.authors }}</p>
             <p class="mt-0">Publisher: {{ book.publisher }}</p>
             <p class="mt-0">ISBN: {{ book.isbn13 }}</p>
