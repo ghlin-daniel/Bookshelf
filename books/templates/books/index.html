@@ -7,23 +7,33 @@
 
 {% block content %}
   {% if books %}
-    {% for book in books %}
-      {% if forloop.counter0|divisibleby:"6" %}<div class="card-deck mt-4">{% endif %}
-      <div class="card" id="book-card">
-        <div class="card-header">
-          <a href="{% url 'books:detail' book.isbn13 %}">
-            <img id="book-img" src="{{ book.image_url }}">
-          </a>
-        </div>
-        <div class="card-body">
-          <a href="{% url 'books:detail' book.isbn13 %}">
-            <p id="book-title">{{ book.title|truncatechars:25 }}</p>
-          </a>
-          <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
-        </div>
+    <div id="index-list">
+      <div><h6 id="index-list-header">RECENTLY UPDATED</h6></div>
+      <hr id="index-list-header-line" />
+      <div id="index-list-content">
+        {% for book in books %}
+          {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
+          <div class="col-2">
+            <div class="card" id="book-card">
+              <div class="card-header">
+                <a href="{% url 'books:detail' book.isbn13 %}">
+                  <img id="book-img" src="{{ book.image_url }}">
+                </a>
+              </div>
+              <div class="card-body">
+                <a href="{% url 'books:detail' book.isbn13 %}">
+                  <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                </a>
+              </div>
+              <div class="card-footer">
+                  <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
+                </div>
+            </div>
+          </div>
+          {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+        {% endfor %}
       </div>
-      {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
-    {% endfor %}
+    </div>
   {% else %}
     <h1 style="text-align: center">No books?</h1>
   {% endif %}

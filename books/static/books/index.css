@@ -1,5 +1,24 @@
-#book-card {
-  max-width: 10rem;
+#index-list {
+  border-radius: 15px;
+  background-color: #ECEDEC;
+}
+
+#index-list-header {
+  padding-top: 1rem;
+  padding-left: 1rem;
+  color: #5A5A5A;
+}
+
+#index-list-header-line {
+  border: 0;
+  border-top: 1px solid #DBDBDB;
+  border-bottom: 1px solid #F7F7F7;
+}
+
+#index-list-content {
+  padding-bottom: 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
 #book-img {
@@ -12,6 +31,7 @@
 #book-title {
   font-size: 13px;
   height: 3rem;
+  color: black;
 }
 
 #book-authors {
