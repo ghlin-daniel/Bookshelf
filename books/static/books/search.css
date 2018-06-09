@@ -7,10 +7,11 @@
 
 #book-title {
   font-size: 15px;
-  height: 3rem;
+  height: 1rem;
+  color: black;
 }
 
 #book-authors {
-  font-size: 12px;
+  font-size: 13px;
   height: 1rem;
 }
