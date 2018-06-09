@@ -1,11 +1,23 @@
+.navbar {
+  background-color: #DABC8C;
+}
+
 #form-login {
   padding: 1em;
   min-width: 280px;
 }
 
 #content {
-  padding-top: 80px;
-  padding-bottom: 30px;
+  margin-top: 80px;
+  margin-bottom: 20px;
+}
+
+.modal-header {
+  background-color: #DABC8C;
+}
+
+.modal-title {
+  color: white;
 }
 
 #reading-progress {
