@@ -9,34 +9,50 @@
   {% if book %}
     <div class="row">
       <div class="col-10">
-        <div class="media">
-          <img class="mr-3" id="book-img" src="{{ book.image_url }}" alt="Generic placeholder image">
-          <div class="media-body">
-            <h5 class="mt-0">{{ book.title }}</h5>
-            <h6 class="mt-0">{{ book.subtitle }}</h6>
-            <hr id="detail-line" />
-            <p class="mt-0">Authors: {{ book.authors }}</p>
-            <p class="mt-0">Publisher: {{ book.publisher }}</p>
-            <p class="mt-0">ISBN: {{ book.isbn13 }}</p>
-            <p class="mt-0">Pages: {{ book.page_count }}</p>
+        <div class="row">
+          <div class="col">
+            <div class="media">
+              <img class="mr-3" id="book-img" src="{{ book.image_url }}" alt="Generic placeholder image">
+              <div class="media-body">
+                <h5 class="mt-0">{{ book.title }}</h5>
+                <h6 class="mt-0">{{ book.subtitle }}</h6>
+                <hr id="detail-line" />
+                <div id="book-info">
+                  <small>
+                    Authors: {{ book.authors }}<br/>
+                    Publisher: {{ book.publisher }}<br/>
+                    ISBN: {{ book.isbn13 }}<br/>
+                    Pages: {{ book.page_count }}<br/>
+                  </small>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div class="col">
-        <p>
-          {% if request.user.is_authenticated %}
-            {% if book.owned %}
-              <a class="btn btn-danger btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
-            {% else %}
-              <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
-            {% endif %}
-          {% endif %}
-        </p>
-        <p>
-          {% if request.user.is_authenticated and book.owned %}
-            <button type="button" class="btn btn-primary btn-sm reading-link" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}">Progress</button>
-          {% endif %}
-        </p>
+        <div id="button-group-out">
+          <div id="button-group-in">
+            <div class="row">
+              <div class="col2 mx-auto">
+                {% if request.user.is_authenticated and book.owned %}
+                  <button type="button" class="btn btn-secondary btn-sm reading-link" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}">Progress</button>
+                {% endif %}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col2 mx-auto">
+                {% if request.user.is_authenticated %}
+                  {% if book.owned %}
+                    <a class="btn btn-danger btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
+                  {% else %}
+                    <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   {% else %}
