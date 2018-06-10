@@ -31,30 +31,30 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        <div id="button-group-out">
-          <div id="button-group-in">
-            <div class="row">
-              <div class="col2 mx-auto">
-                {% if request.user.is_authenticated and book.owned %}
-                  <button type="button" class="btn btn-info btn-sm reading-link side-btn" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}"><span class="oi oi-task btn-icon"></span>Progress</button>
-                {% endif %}
+      {% if request.user.is_authenticated %}
+        <div class="col">
+          <div id="button-group-out">
+            <div id="button-group-in">
+              <div class="row">
+                <div class="col2 mx-auto">
+                  {% if request.user.is_authenticated and book.owned %}
+                    <button type="button" class="btn btn-info btn-sm reading-link side-btn" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}"><span class="oi oi-task btn-icon"></span>Progress</button>
+                  {% endif %}
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col2 mx-auto">
-                {% if request.user.is_authenticated %}
+              <div class="row">
+                <div class="col2 mx-auto">
                   {% if book.owned %}
                     <button type="button" class="btn btn-danger btn-sm side-btn" id="detail-remove-book" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-trash btn-icon"></span>Remove</button>
                   {% else %}
                     <button type="button" class="btn btn-success btn-sm side-btn" id="detail-add-book" add-url="{% url 'books:add_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-book btn-icon"></span>Add</button>
                   {% endif %}
-                {% endif %}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      {% endif %}
     </div>
   {% else %}
     <h1 style="text-align: center">No this book</h1>
