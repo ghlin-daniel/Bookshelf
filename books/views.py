@@ -117,7 +117,8 @@ def reading(request, book_isbn13):
 
     try:
         book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
-        reading_set = Reading.objects.filter(bookshelf__book=book).order_by('-id')
+        reader = Reader.objects.get(user__id=request.user.id)
+        reading_set = Reading.objects.filter(bookshelf__reader=reader).filter(bookshelf__book=book).order_by('-id')
         readings = [{"id": r.id, "start_date": r.start_date, "end_date": r.end_date, "progress": r.progress} for r in reading_set]
     except Book.DoesNotExist:
         book = None
