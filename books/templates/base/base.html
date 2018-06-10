@@ -6,6 +6,7 @@
 
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -70,8 +71,7 @@
         </div>
         <div class="modal-body">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle btn-sm dialog-btn" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            </button>
+            <button class="btn btn-secondary dropdown-toggle btn-sm dialog-btn" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
             <div class="dropdown-menu" aria-labelledby="reading-progress">
               <a class="dropdown-item" id="action-finish" href="#">Finish</a>
               <a class="dropdown-item" id="action-read" href="#">Read</a>
@@ -81,19 +81,17 @@
           <table class="table table-hover reading-list-table">
             <thead>
               <tr>
-                <th class=="reading-list-header" scope="col">Start</th>
-                <th class=="reading-list-header" scope="col">End</th>
-                <th class=="reading-list-header" scope="col">Progress</th>
-                <th class=="reading-list-header" scope="col">Actions</th>
-                <th class=="reading-list-header" scope="col"></th>
+                <th class="reading-list-header">Start</th>
+                <th class="reading-list-header">End</th>
+                <th class="reading-list-header">Progress</th>
+                <th class="reading-list-header">Actions</th>
               </tr>
             </thead>
             <tbody id="reading-list"></tbody>
           </table>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger mr-auto btn-sm dialog-btn" id="action-remove-book">Remove</button>
-          <button type="button" class="btn btn-secondary btn-sm dialog-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger btn-sm dialog-btn" id="action-remove-book"><span class="oi oi-trash btn-icon"></span>Remove</button>
         </div>
       </div>
     </div>

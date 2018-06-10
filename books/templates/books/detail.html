@@ -45,9 +45,9 @@
               <div class="col2 mx-auto">
                 {% if request.user.is_authenticated %}
                   {% if book.owned %}
-                    <button type="button" class="btn btn-danger btn-sm" id="detail-remove-book" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-trash btn-icon"></span>Remove</button>
+                    <button type="button" class="btn btn-danger btn-sm side-btn" id="detail-remove-book" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-trash btn-icon"></span>Remove</button>
                   {% else %}
-                    <button type="button" class="btn btn-success btn-sm" id="detail-add-book" add-url="{% url 'books:add_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-book btn-icon"></span>Add</button>
+                    <button type="button" class="btn btn-success btn-sm side-btn" id="detail-add-book" add-url="{% url 'books:add_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-book btn-icon"></span>Add</button>
                   {% endif %}
                 {% endif %}
               </div>
