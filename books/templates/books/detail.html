@@ -3,6 +3,7 @@
 {% block ref %}
   {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'books/detail.css' %}" />
+  <script src="{% static 'books/detail.js'%}"></script>
 {% endblock %}
 
 {% block content %}
@@ -36,7 +37,7 @@
             <div class="row">
               <div class="col2 mx-auto">
                 {% if request.user.is_authenticated and book.owned %}
-                  <button type="button" class="btn btn-secondary btn-sm reading-link" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}">Progress</button>
+                  <button type="button" class="btn btn-info btn-sm reading-link" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}"><span class="oi oi-task btn-icon"></span>Progress</button>
                 {% endif %}
               </div>
             </div>
@@ -44,9 +45,9 @@
               <div class="col2 mx-auto">
                 {% if request.user.is_authenticated %}
                   {% if book.owned %}
-                    <a class="btn btn-danger btn-sm" href="{% url 'books:remove_book' book.isbn13 %}">Remove</a>
+                    <button type="button" class="btn btn-danger btn-sm" id="detail-remove-book" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-trash btn-icon"></span>Remove</button>
                   {% else %}
-                    <a class="btn btn-primary btn-sm" href="{% url 'books:add_book' book.isbn13 %}">Add</a>
+                    <button type="button" class="btn btn-success btn-sm" id="detail-add-book" add-url="{% url 'books:add_book' book.isbn13 %}?redirect={{ request.path }}"><span class="oi oi-book btn-icon"></span>Add</button>
                   {% endif %}
                 {% endif %}
               </div>

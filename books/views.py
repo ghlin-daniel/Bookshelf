@@ -67,6 +67,10 @@ def add_book(request, book_isbn13):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/')
 
+    redirect = request.GET.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
+
     try:
         book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
     except Book.DoesNotExist:
@@ -81,12 +85,16 @@ def add_book(request, book_isbn13):
             except IntegrityError:
                 pass
 
-    return HttpResponseRedirect('/bookshelf')
+    return HttpResponseRedirect(redirect)
 
 
 def remove_book(request, book_isbn13):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/')
+
+    redirect = request.GET.get('redirect', '/')
+    if redirect == '':
+        redirect = '/'
 
     try:
         book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
@@ -100,7 +108,7 @@ def remove_book(request, book_isbn13):
             if bookshelf_set.count() == 1:
                 bookshelf_set.delete()
 
-    return HttpResponseRedirect('/bookshelf')
+    return HttpResponseRedirect(redirect)
 
 
 def reading(request, book_isbn13):
