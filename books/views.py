@@ -137,7 +137,7 @@ def all_readings(request):
         return JsonResponse({'error': 'Please login first'})
 
     reader = Reader.objects.get(user__id=request.user.id)
-    reading_set = Reading.objects.filter(bookshelf__reader=reader).order_by('-id')
+    reading_set = Reading.objects.filter(bookshelf__reader=reader).order_by('-start_date')
     readings = [{"id": r.id, "book_title": r.bookshelf.book.title, "start_date": r.start_date, "end_date": r.end_date,
                  "progress": r.progress} for r in reading_set]
 
