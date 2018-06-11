@@ -56,10 +56,10 @@ function updateReadingList(readings) {
 
   for (var index in readings) {
     var reading = readings[index];
-    var from = "<td class='reading-list-column'><input class='form-control form-control-sm reading-date reading-date-from' type='text' readonly value='" + reading.start_date + "'></td>";
+    var from = "<td class='reading-list-column reading-list-column-center'><input class='form-control form-control-sm reading-date reading-date-from' type='text' readonly value='" + reading.start_date + "'></td>";
     var isEnded = reading.end_date != null;
-    var to = "<td class='reading-list-column'><input class='form-control form-control-sm reading-date reading-date-to' type='text' readonly " + (isEnded ? "" : "hidden ") + "value='" + (isEnded ? reading.end_date : "") + "'></td>";
-    var progress = "<td class='align-middle reading-list-column' id='reading-list-progress'>" + statuses[reading.progress] + "</td>";
+    var to = "<td class='reading-list-column reading-list-column-center'><input class='form-control form-control-sm reading-date reading-date-to' type='text' readonly " + (isEnded ? "" : "hidden ") + "value='" + (isEnded ? reading.end_date : "") + "'></td>";
+    var progress = "<td class='reading-list-column reading-list-column-center'>" + statuses[reading.progress] + "</td>";
     var btnSave = "<button class='btn btn-primary btn-sm save-reading dialog-btn' href='#'><span class='oi oi-box btn-icon'></span>Save</a>";
     var btnDelete = "<button class='btn btn-danger btn-sm delete-reading dialog-btn' href='#'><span class='oi oi-delete btn-icon'></span>Delete</a>";
     var actions = "<td class='reading-list-column' id='reading-list-actions'>" + btnSave + btnDelete + "</td>";
