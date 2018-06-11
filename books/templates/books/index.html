@@ -30,7 +30,7 @@
                 </div>
             </div>
           </div>
-          {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+          {% if forloop.counter|divisibleby:"6" or forloop.counter == books|length %}</div>{% endif %}
         {% endfor %}
       </div>
     </div>

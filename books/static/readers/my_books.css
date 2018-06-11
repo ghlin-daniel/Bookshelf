@@ -4,9 +4,28 @@
 }
 
 #my-books-list-header {
+  overflow: hidden;
   padding-top: 1rem;
   padding-left: 1rem;
+}
+
+.tab-btn {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding-left: 1rem;
+  padding-right: 1rem;
   color: #5A5A5A;
+}
+
+.tab-btn:focus {
+  outline: none;
+}
+
+.tab-btn.active {
+  color: #DABC8C;
 }
 
 #my-books-list-header-line {
@@ -15,7 +34,8 @@
   border-bottom: 1px solid #F7F7F7;
 }
 
-#my-books-list-content {
+.tab-content {
+  display: none;
   padding-bottom: 1rem;
   padding-right: 1rem;
   padding-left: 1rem;
@@ -37,4 +57,38 @@
 #book-authors {
   font-size: 11px;
   height: 1rem;
+}
+
+.my-readings-list-table {
+  table-layout: fixed;
+}
+
+#my-readings-list-header-title {
+  width: 60%;
+}
+
+#my-readings-list-header-start {
+  width: 15%;
+  overflow: hidden;
+  text-align: center;
+}
+
+#my-readings-list-header-end {
+  width: 15%;
+  overflow: hidden;
+  text-align: center;
+}
+
+#my-readings-list-header-progress {
+  width: 10%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.my-readings-list-column {
+  font-size: 15px;
+}
+
+.my-readings-list-column-center {
+  text-align: center;
 }

@@ -21,17 +21,18 @@ from books import views
 from .settings import DEBUG
 
 urlpatterns = [
-  path('login/', views.login, name='login'),
-  path('logout/', views.logout, name='logout'),
-  path('books/', include('books.urls')),
-  path('bookshelf/<int:book_isbn13>/update/', views.update_reading, name='update_reading'),
-  path('bookshelf/<int:book_isbn13>/delete/', views.delete_reading, name='delete_reading'),
-  path('bookshelf/<int:book_isbn13>/read/', views.start_reading, name='start_reading'),
-  path('bookshelf/<int:book_isbn13>/abandon/', views.abandon_reading, name='abandon_reading'),
-  path('bookshelf/<int:book_isbn13>/finish/', views.finish_reading, name='finish_reading'),
-  path('bookshelf/<int:book_isbn13>/', views.reading, name='reading'),
-  path('bookshelf/', views.my_books, name='bookshelf'),
-  path('', views.index),
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
+    path('books/', include('books.urls')),
+    path('bookshelf/<int:book_isbn13>/update/', views.update_reading, name='update_reading'),
+    path('bookshelf/<int:book_isbn13>/delete/', views.delete_reading, name='delete_reading'),
+    path('bookshelf/<int:book_isbn13>/read/', views.start_reading, name='start_reading'),
+    path('bookshelf/<int:book_isbn13>/abandon/', views.abandon_reading, name='abandon_reading'),
+    path('bookshelf/<int:book_isbn13>/finish/', views.finish_reading, name='finish_reading'),
+    path('bookshelf/<int:book_isbn13>/', views.reading, name='reading'),
+    path('bookshelf/readings/', views.all_readings, name='all_readings'),
+    path('bookshelf/', views.my_books, name='bookshelf'),
+    path('', views.index),
 ]
 
 if DEBUG:

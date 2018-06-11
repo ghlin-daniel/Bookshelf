@@ -63,7 +63,7 @@ function updateReadingList(readings) {
     var btnSave = "<button class='btn btn-primary btn-sm save-reading dialog-btn' href='#'><span class='oi oi-box btn-icon'></span>Save</a>";
     var btnDelete = "<button class='btn btn-danger btn-sm delete-reading dialog-btn' href='#'><span class='oi oi-delete btn-icon'></span>Delete</a>";
     var actions = "<td class='reading-list-column' id='reading-list-actions'>" + btnSave + btnDelete + "</td>";
-    $("#reading-list").append("<tr reading-id='" + reading.id + "'>" + from + " " + to + progress + actions + "</tr>");
+    $("#reading-list").append("<tr reading-id='" + reading.id + "'>" + from + to + progress + actions + "</tr>");
   }
 
   $("tr").each(function() {

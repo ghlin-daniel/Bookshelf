@@ -132,6 +132,22 @@ def reading(request, book_isbn13):
     return JsonResponse(data)
 
 
+def all_readings(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    reader = Reader.objects.get(user__id=request.user.id)
+    reading_set = Reading.objects.filter(bookshelf__reader=reader).order_by('-id')
+    readings = [{"id": r.id, "book_title": r.bookshelf.book.title, "start_date": r.start_date, "end_date": r.end_date,
+                 "progress": r.progress} for r in reading_set]
+
+    data = {
+        'readings': readings,
+    }
+
+    return JsonResponse(data)
+
+
 def update_reading(request, book_isbn13):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Please login first'})

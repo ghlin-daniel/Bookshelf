@@ -3,14 +3,18 @@
 {% block ref %}
   {% load static %}
   <link rel="stylesheet" type="text/css" href="{% static 'readers/my_books.css' %}" />
+  <script src="{% static 'readers/my_books.js'%}"></script>
 {% endblock %}
 
 {% block content %}
   {% if books %}
     <div id="my-books-list">
-      <div><h6 id="my-books-list-header">MY BOOKS</h6></div>
+      <div id="my-books-list-header">
+        <button class="tab-btn tab-btn-default" data-tab-content-id="#my-books-list-content">MY BOOKS</button>
+        <button class="tab-btn" id="tab-btn-my-readings" data-tab-content-id="#my-readings-list-content">MY READINGS</button>
+      </div>
       <hr id="my-books-list-header-line" />
-      <div id="my-books-list-content">
+      <div class="tab-content" id="my-books-list-content">
         {% for book in books %}
           {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
             <div class="col-2">
@@ -30,8 +34,22 @@
                 </div>
               </div>
             </div>
-          {% if forloop.counter|divisibleby:"6" %}</div>{% endif %}
+          {% if forloop.counter|divisibleby:"6" or forloop.counter == books|length %}</div>{% endif %}
         {% endfor %}
+      </div>
+      <div class="tab-content" id="my-readings-list-content">
+        <table class="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th id="my-readings-list-header-title">Book</th>
+              <th id="my-readings-list-header-start">Start</th>
+              <th id="my-readings-list-header-end">End</th>
+              <th id="my-readings-list-header-progress">Progress</th>
+            </tr>
+          </thead>
+          <tbody id="my-readings-list">
+          </tbody>
+        </table>
       </div>
     </div>
   {% else %}
