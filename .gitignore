@@ -156,4 +156,4 @@ fabric.properties
 *.sqlite3
 migrations/
 /static/
-secret.yaml
+*.yaml
