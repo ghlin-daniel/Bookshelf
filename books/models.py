@@ -32,12 +32,13 @@ class Reader(models.Model):
 class Bookshelf(models.Model):
     reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    added_date = models.DateField(blank=True, null=True)
 
     class Meta:
         unique_together = ("reader", "book")
 
     def __str__(self):
-        return self.reader.user.username + " has " + self.book.title
+        return self.reader.user.username + " added " + self.book.title + " on " + str(self.added_date)
 
 
 class Reading(models.Model):
@@ -57,4 +58,4 @@ class Reading(models.Model):
 
     def __str__(self):
         return self.bookshelf.reader.user.username + " read " + self.bookshelf.book.title + \
-               " from " + str(self.start_date) + " to " + str(self.end_date)
+               " in " + str(self.start_date) + " - " + str(self.end_date)

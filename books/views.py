@@ -80,7 +80,7 @@ def add_book(request, book_isbn13):
         reader = Reader.objects.get(user__id=request.user.id)
         if reader is not None:
             try:
-                bookshelf = Bookshelf(reader=reader, book=book)
+                bookshelf = Bookshelf(reader=reader, book=book, added_date=datetime.date.today())
                 bookshelf.save()
             except IntegrityError:
                 pass
@@ -269,7 +269,7 @@ def my_books(request):
         return HttpResponseRedirect('/')
 
     reader = Reader.objects.get(user__id=request.user.id)
-    books = Book.objects.filter(verified=True).filter(bookshelf__reader=reader)
+    books = Book.objects.filter(verified=True).filter(bookshelf__reader=reader).order_by('-bookshelf__id')
 
     return render(request, 'readers/my_books.html', {'books': books})
 

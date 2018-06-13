@@ -19,6 +19,7 @@ function loadAllReadings() {
     url: '/bookshelf/readings/',
     dataType: 'json',
     success: function(response) {
+      $("#my-readings-list").empty();
       if (response.readings) {
         updateMyReadingsList(response.readings);
       }
