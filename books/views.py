@@ -13,7 +13,7 @@ from .models import Book, Reader, Bookshelf, Reading
 
 
 def index(request):
-    books = Book.objects.filter(verified=True).order_by('-added_date')[:30]
+    books = Book.objects.filter(verified=True).order_by('-id')[:30]
     return render(request, 'books/index.html', {'books': books})
 
 
