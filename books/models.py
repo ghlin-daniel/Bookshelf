@@ -19,7 +19,7 @@ class Book(models.Model):
     verified_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return self.title
+        return self.title + " by " + self.authors
 
 
 class Reader(models.Model):
