@@ -40,7 +40,11 @@ def save(db, conn, books):
 
         publisher = info.get('publisher', '')
         published_date = info.get('publishedDate', '')
-        description = ''  # info.get('description', '')
+        if len(published_date) < 10:
+            continue
+
+        description = ''
+        # description = info.get('description', '')
         page_count = info.get('pageCount', 0)
 
         image_links = info.get('imageLinks', None)
