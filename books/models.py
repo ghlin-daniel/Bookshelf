@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Book(models.Model):
@@ -33,6 +34,7 @@ class Bookshelf(models.Model):
     reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     added_date = models.DateField(blank=True, null=True)
+    rate = models.IntegerField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     class Meta:
         unique_together = ("reader", "book")

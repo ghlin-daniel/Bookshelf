@@ -10,6 +10,20 @@ function disableViews(disabled) {
   $(".reading-date-to").prop("disabled", disabled);
 }
 
+function updateBookRate(rate) {
+  $("#book-rate").attr("data-book-rate", rate)
+
+  for (i = 1; i <= 5; i++) {
+    var star = $("#star" + i);
+    star.removeClass("active");
+    star.text("star_border");
+    if (i <= rate) {
+      $(star).addClass("active")
+      star.text("star");
+    }
+  }
+}
+
 function updateReadingList(readings) {
   var actionFinish = $("#action-finish");
   var actionRead = $("#action-read");
@@ -184,6 +198,7 @@ function onSaveClick() {
 function onReadingLinkClick() {
   clearViews();
   disableViews(true);
+  updateBookRate(0);
 
   var isbn13 = $(this).attr("book-isbn13");
   var removeUrl = $(this).attr("remove-url");
@@ -199,6 +214,9 @@ function onReadingLinkClick() {
       if (response.book) {
         var book = response.book;
         $("#reading-book-title").text(book.title);
+      }
+      if (response.rate) {
+        updateBookRate(response.rate);
       }
       if (response.readings) {
         updateReadingList(response.readings);
@@ -290,10 +308,55 @@ function onActionRemoveBookClick() {
   location.href = removeUrl
 }
 
+function onBookRateUnhover() {
+  var rate = $("#book-rate").attr("data-book-rate");
+  updateBookRate(rate);
+}
+
+function onBookRateStarHover() {
+  var index = parseInt($(this).attr("data-index"));
+  for (i = 1; i <= 5; i++) {
+    var star = $("#star" + i);
+    star.removeClass("active");
+    star.text("star_border");
+    if (i <= index) {
+      $(star).addClass("active")
+      star.text("star");
+    }
+  }
+}
+
+function onBookRateStarClick() {
+  var rate = parseInt($(this).attr("data-index"));
+  updateBookRate(rate);
+
+  var isbn13 = $("#reading-dialog").attr("book-isbn13");
+
+  $.ajax({
+    url: '/bookshelf/' + isbn13 + "/rate/",
+    data: { "rate": rate },
+    dataType: 'json',
+    type: 'POST',
+    beforeSend: function(xhr, settings) {
+      if (!this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+      }
+    },
+    success: function(response) {
+      if (response.rate) {
+        updateBookRate(response.rate);
+      }
+    }
+  });
+}
+
 $(document).ready(function() {
   $(".reading-link").click(onReadingLinkClick);
   $("#action-read").click(onActionReadClick);
   $("#action-finish").click(onActionFinishClick);
   $("#action-abandon").click(onActionAbandonClick);
   $("#action-remove-book").click(onActionRemoveBookClick);
+  $("#book-rate").hover(null, onBookRateUnhover);
+  $(".book-rate-star").hover(onBookRateStarHover);
+  $(".book-rate-star").click(onBookRateStarClick);
 });

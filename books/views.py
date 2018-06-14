@@ -111,6 +111,31 @@ def remove_book(request, book_isbn13):
     return HttpResponseRedirect(redirect)
 
 
+def rate_book(request, book_isbn13):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Please login first'})
+
+    rate = request.POST.get('rate', None)
+    if rate is not None:
+        bookshelf_set = None
+        try:
+            reader = Reader.objects.get(user__id=request.user.id)
+            book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
+            if reader is not None and book is not None:
+                bookshelf_set = Bookshelf.objects.filter(reader=reader).filter(book=book)
+        except Book.DoesNotExist:
+            pass
+
+        if bookshelf_set is not None and bookshelf_set.count() == 1:
+            bookshelf_set.update(rate=rate)
+
+    data = {
+        'rate': rate,
+    }
+
+    return JsonResponse(data)
+
+
 def reading(request, book_isbn13):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Please login first'})
@@ -118,14 +143,18 @@ def reading(request, book_isbn13):
     try:
         book = Book.objects.filter(verified=True).get(isbn13=book_isbn13)
         reader = Reader.objects.get(user__id=request.user.id)
+        bookshelf = Bookshelf.objects.filter(book=book).filter(reader=reader).get()
+        rate = bookshelf.rate
         reading_set = Reading.objects.filter(bookshelf__reader=reader).filter(bookshelf__book=book).order_by('-id')
         readings = [{"id": r.id, "start_date": r.start_date, "end_date": r.end_date, "progress": r.progress} for r in reading_set]
     except Book.DoesNotExist:
         book = None
+        rate = None
         readings = None
 
     data = {
         'book': model_to_dict(book),
+        'rate': rate,
         'readings': readings,
     }
 

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -70,13 +71,12 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle btn-sm dialog-btn" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-            <div class="dropdown-menu" aria-labelledby="reading-progress">
-              <a class="dropdown-item" id="action-finish" href="#">Finish</a>
-              <a class="dropdown-item" id="action-read" href="#">Read</a>
-              <a class="dropdown-item" id="action-abandon" href="#">Abandon</a>
-            </div>
+          <div id="book-rate">
+            <span class="material-icons book-rate-star" id="star1" data-index="1">star_border</span>
+            <span class="material-icons book-rate-star" id="star2" data-index="2">star_border</span>
+            <span class="material-icons book-rate-star" id="star3" data-index="3">star_border</span>
+            <span class="material-icons book-rate-star" id="star4" data-index="4">star_border</span>
+            <span class="material-icons book-rate-star" id="star5" data-index="5">star_border</span>
           </div>
           <table class="table table-hover table-sm reading-list-table">
             <thead>
@@ -91,6 +91,14 @@
           </table>
         </div>
         <div class="modal-footer">
+          <div class="dropdown mr-auto">
+            <button class="btn btn-secondary dropdown-toggle btn-sm dialog-btn" id="reading-progress" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="dropdown-menu" aria-labelledby="reading-progress">
+              <a class="dropdown-item" id="action-finish" href="#">Finish</a>
+              <a class="dropdown-item" id="action-read" href="#">Read</a>
+              <a class="dropdown-item" id="action-abandon" href="#">Abandon</a>
+            </div>
+          </div>
           <button type="button" class="btn btn-danger btn-sm dialog-btn" id="action-remove-book"><span class="oi oi-trash btn-icon"></span>Remove</button>
         </div>
       </div>
