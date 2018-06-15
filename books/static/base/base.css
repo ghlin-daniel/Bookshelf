@@ -59,10 +59,10 @@
   display: inline-block;
 }
 
-.book-rate-star {
+.dialog-book-rate-star {
   color: darkgray;
 }
 
-.book-rate-star.active {
+.dialog-book-rate-star.active {
   color: #DABC8C;
 }

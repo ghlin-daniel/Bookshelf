@@ -20,17 +20,26 @@
             <div class="col-2">
               <div class="card book-card">
                 <div class="card-header my-book-header">
-                  <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}">
-                    <img class="book-img" src="{{ book.image_url }}">
+                  <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.book.isbn13 }}" remove-url="{% url 'books:remove_book' book.book.isbn13 %}?redirect={{ request.path }}">
+                    <img class="book-img" src="{{ book.book.image_url }}">
                   </a>
+                  <div class="my-book-rate text-center" data-book-isbn="{{ book.book.isbn13 }}" data-my-book-rate="{{ book.rate }}">
+                    {% for i in "*****" %}
+                      {% if forloop.counter <= book.rate %}
+                        <i class="material-icons my-book-rate-star my-book-rate-star{{ forloop.counter }} book-rate-star  active" data-index="{{ forloop.counter }}">star</i>
+                      {% else %}
+                        <i class="material-icons my-book-rate-star my-book-rate-star{{ forloop.counter }} book-rate-star" data-index="{{ forloop.counter }}">star_border</i>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
                 </div>
                 <div class="card-body">
-                  <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}">
-                    <p id="book-title">{{ book.title|truncatechars:25 }}</p>
+                  <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.book.isbn13 }}" remove-url="{% url 'books:remove_book' book.book.isbn13 %}?redirect={{ request.path }}">
+                    <p id="book-title">{{ book.book.title|truncatechars:25 }}</p>
                   </a>
                 </div>
                 <div class="card-footer">
-                  <p class="text-secondary" id="book-authors">{{ book.authors|truncatechars:25 }}</p>
+                  <p class="text-secondary" id="book-authors">{{ book.book.authors|truncatechars:25 }}</p>
                 </div>
               </div>
             </div>

@@ -311,7 +311,7 @@ def my_books(request):
         return HttpResponseRedirect('/')
 
     reader = Reader.objects.get(user__id=request.user.id)
-    books = Book.objects.filter(verified=True).filter(bookshelf__reader=reader).order_by('-bookshelf__id')
+    books = Bookshelf.objects.filter(book__verified=True).filter(reader=reader).order_by('-id')
 
     return render(request, 'readers/my_books.html', {'books': books})
 

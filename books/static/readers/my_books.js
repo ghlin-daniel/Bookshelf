@@ -45,7 +45,70 @@ function updateMyReadingsList(readings) {
   }
 }
 
+function updateMyBookRate(myBookRateTag, myBookRate) {
+  myBookRateTag.attr("data-my-book-rate", myBookRate)
+
+  for (i = 1; i <= 5; i++) {
+    var star = myBookRateTag.children(".my-book-rate-star" + i)
+    star.removeClass("active");
+    star.text("star_border");
+    if (i <= myBookRate) {
+      $(star).addClass("active")
+      star.text("star");
+    }
+  }
+}
+
+function onMyBookRateUnhover() {
+  var myBookRateTag = $(this);
+  var myBookRate = myBookRateTag.attr("data-my-book-rate");
+  updateMyBookRate(myBookRateTag, myBookRate);
+}
+
+function onMyBookRateStarHover() {
+  var myBookRateTag = $(this).parent(".my-book-rate");
+  var index = parseInt($(this).attr("data-index"));
+
+  for (i = 1; i <= 5; i++) {
+    var star = myBookRateTag.children(".my-book-rate-star" + i);
+    star.removeClass("active");
+    star.text("star_border");
+    if (i <= index) {
+      $(star).addClass("active")
+      star.text("star");
+    }
+  }
+}
+
+function onMyBookRateStarClick() {
+  var myBookRateTag = $(this).parent(".my-book-rate");
+  var isbn13 = myBookRateTag.attr("data-book-isbn");
+  var myBookRate = parseInt($(this).attr("data-index"));
+  updateMyBookRate(myBookRateTag, myBookRate);
+
+  $.ajax({
+    url: '/bookshelf/' + isbn13 + "/rate/",
+    data: { "rate": myBookRate },
+    dataType: 'json',
+    type: 'POST',
+    beforeSend: function(xhr, settings) {
+      if (!this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", Cookies.get('csrftoken'));
+      }
+    },
+    success: function(response) {
+      console.log("r " + response);
+      if (response.rate) {
+        updateMyBookRate(myBookRateTag, response.rate);
+      }
+    }
+  });
+}
+
 $(document).ready(function() {
   $(".tab-btn").click(onTabClick);
   $(".tab-btn-default").trigger("click");
+  $(".my-book-rate").hover(function(){}, onMyBookRateUnhover);
+  $(".my-book-rate-star").hover(onMyBookRateStarHover, function(){});
+  $(".my-book-rate-star").click(onMyBookRateStarClick);
 });

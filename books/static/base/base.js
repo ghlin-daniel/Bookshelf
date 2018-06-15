@@ -208,7 +208,7 @@ function onReadingLinkClick() {
   readingDialog.attr("remove-url", removeUrl);
 
   $.ajax({
-    url: '/bookshelf/' + isbn13,
+    url: '/bookshelf/' + isbn13 + "/",
     dataType: 'json',
     success: function(response) {
       if (response.book) {
@@ -331,7 +331,6 @@ function onBookRateStarClick() {
   updateBookRate(rate);
 
   var isbn13 = $("#reading-dialog").attr("book-isbn13");
-
   $.ajax({
     url: '/bookshelf/' + isbn13 + "/rate/",
     data: { "rate": rate },
@@ -356,7 +355,7 @@ $(document).ready(function() {
   $("#action-finish").click(onActionFinishClick);
   $("#action-abandon").click(onActionAbandonClick);
   $("#action-remove-book").click(onActionRemoveBookClick);
-  $("#book-rate").hover(null, onBookRateUnhover);
-  $(".book-rate-star").hover(onBookRateStarHover);
-  $(".book-rate-star").click(onBookRateStarClick);
+  $("#book-rate").hover(function(){}, onBookRateUnhover);
+  $(".dialog-book-rate-star").hover(onBookRateStarHover, function(){});
+  $(".dialog-book-rate-star").click(onBookRateStarClick);
 });

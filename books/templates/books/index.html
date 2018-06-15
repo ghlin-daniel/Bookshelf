@@ -20,12 +20,12 @@
                   <img class="book-img" src="{{ book.image_url }}">
                 </a>
                 <div class="index-book-rate text-center">
-                  {% if book.rate %}
+                  {% if book.rate_count > 0 %}
                     {% for i in "*****" %}
                       {% if forloop.counter <= book.rate %}
-                        <i class="material-icons index-book-rate-star book-rate-star active">star</i>
+                        <span class="material-icons index-book-rate-star book-rate-star active">star</span>
                       {% else %}
-                        <i class="material-icons index-book-rate-star book-rate-star">star_border</i>
+                        <span class="material-icons index-book-rate-star book-rate-star">star_border</span>
                       {% endif %}
                     {% endfor %}
                   {% endif %}

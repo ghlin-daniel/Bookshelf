@@ -40,10 +40,6 @@
   height: 1rem;
 }
 
-.index-book-rate-star {
-  font-size: 15px;
-}
-
 .index-book-header {
   width: 100%;
   height: 12rem;
@@ -52,4 +48,13 @@
 .index-book-rate {
   height: 10%;
   margin-top: 3px;
+}
+
+.index-book-rate-star {
+  font-size: 15px;
+   color: darkgray;
+}
+
+.index-book-rate-star.active {
+  color: #DABC8C;
 }
