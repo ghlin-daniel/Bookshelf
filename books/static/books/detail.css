@@ -14,6 +14,10 @@
   line-height: 2;
 }
 
+#book-description {
+  font-size: 15px;
+}
+
 #button-group-out {
   border-style: solid;
   border-width: 1px;
@@ -29,4 +33,26 @@
 .side-btn {
   margin: 10px;
   min-width: 100px;
+}
+
+#detail-book-rate-row {
+  color: darkgray;
+}
+
+#detail-book-rate {
+  font-size: 25px;
+  color: #DABC8C;
+}
+
+.detail-book-rate-star {
+  font-size: 20px;
+  color: darkgray;
+}
+
+.detail-book-rate-star.active {
+  color: #DABC8C;
+}
+
+#detail-book-rate-count {
+  font-size: 15px;
 }

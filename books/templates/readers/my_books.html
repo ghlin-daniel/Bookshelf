@@ -18,10 +18,10 @@
         {% for book in books %}
           {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
             <div class="col-2">
-              <div class="card" id="book-card">
-                <div class="card-header">
+              <div class="card book-card">
+                <div class="card-header my-book-header">
                   <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.isbn13 }}" remove-url="{% url 'books:remove_book' book.isbn13 %}?redirect={{ request.path }}">
-                    <img id="book-img" src="{{ book.image_url }}">
+                    <img class="book-img" src="{{ book.image_url }}">
                   </a>
                 </div>
                 <div class="card-body">

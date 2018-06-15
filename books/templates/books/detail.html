@@ -18,16 +18,31 @@
                 <h5 class="mt-0">{{ book.title }}</h5>
                 <h6 class="mt-0">{{ book.subtitle }}</h6>
                 <hr class="detail-line" />
-                <div id="book-info">
-                  <small>
-                    Authors: {{ book.authors }}<br/>
-                    Publisher: {{ book.publisher }}<br/>
-                    ISBN: {{ book.isbn13 }}<br/>
-                    Pages: {{ book.page_count }}<br/>
-                  </small>
+                <div>
+                  <div id="detail-book-rate-row">
+                    {% if book.rate_count > 0 %}
+                      <span class="align-middle" id="detail-book-rate">{{ book.rate }}</span>
+                        {% for i in "*****" %}
+                          {% if forloop.counter <= book.rate %}
+                            <span class="align-middle material-icons detail-book-rate-star active">star</span>
+                          {% else %}
+                            <span class="align-middle material-icons detail-book-rate-star">star_border</span>
+                          {% endif %}
+                        {% endfor %}
+                      <span id="detail-book-rate-count" class="align-middle">({{ book.rate_count }})</span>
+                    {% endif %}
+                  </div>
+                  <div id="book-info">
+                    <small>
+                      Authors: {{ book.authors }}<br/>
+                      Publisher: {{ book.publisher }}<br/>
+                      ISBN: {{ book.isbn13 }}<br/>
+                      Pages: {{ book.page_count }}<br/>
+                    </small>
+                  </div>
                 </div>
                 <hr class="detail-line" />
-                <div>{{ book.description }}</div>
+                <div id="book-description">{{ book.description }}</div>
               </div>
             </div>
           </div>

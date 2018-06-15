@@ -18,6 +18,8 @@ class Book(models.Model):
     added_date = models.DateField(blank=True, null=True)
     verified = models.BooleanField(default=False)
     verified_date = models.DateField(blank=True, null=True)
+    rate = models.FloatField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rate_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title + " by " + self.authors

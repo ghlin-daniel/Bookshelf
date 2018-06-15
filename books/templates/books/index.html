@@ -14,11 +14,22 @@
         {% for book in books %}
           {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
           <div class="col-2">
-            <div class="card" id="book-card">
-              <div class="card-header">
+            <div class="card book-card">
+              <div class="card-header index-book-header">
                 <a href="{% url 'books:detail' book.isbn13 %}">
-                  <img id="book-img" src="{{ book.image_url }}">
+                  <img class="book-img" src="{{ book.image_url }}">
                 </a>
+                <div class="index-book-rate text-center">
+                  {% if book.rate %}
+                    {% for i in "*****" %}
+                      {% if forloop.counter <= book.rate %}
+                        <i class="material-icons index-book-rate-star book-rate-star active">star</i>
+                      {% else %}
+                        <i class="material-icons index-book-rate-star book-rate-star">star_border</i>
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                </div>
               </div>
               <div class="card-body">
                 <a href="{% url 'books:detail' book.isbn13 %}">

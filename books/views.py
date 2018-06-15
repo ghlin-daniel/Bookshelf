@@ -129,6 +129,19 @@ def rate_book(request, book_isbn13):
         if bookshelf_set is not None and bookshelf_set.count() == 1:
             bookshelf_set.update(rate=rate)
 
+        bookshelf_set = Bookshelf.objects.filter(book=book)
+        all_rates = 0.0
+        count = 0
+        for bookshelf in bookshelf_set:
+            if bookshelf.rate is not None:
+                all_rates += bookshelf.rate
+                count += 1
+
+        average_rate = all_rates / count
+        book.rate = average_rate
+        book.rate_count = count
+        book.save()
+
     data = {
         'rate': rate,
     }
