@@ -3,7 +3,7 @@
   height: 14rem;
 }
 
-#detail-line {
+.detail-line {
   border: 0;
   border-top: 1px solid #DBDBDB;
   border-bottom: 1px solid #F7F7F7;
