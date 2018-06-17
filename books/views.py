@@ -42,7 +42,10 @@ def search(request):
     total = 0
 
     if query != '':
-        query_set = Book.objects.filter(title__icontains=query).filter(verified=True).order_by('-added_date')
+        query_set = Book.objects.filter(
+            Q(title__icontains=query)
+            | Q(subtitle__icontains=query)
+            | Q(authors__icontains=query)).filter(verified=True).order_by('-added_date')
         total = query_set.count()
         books = query_set[(10 * (page - 1)):10 * page]
 
