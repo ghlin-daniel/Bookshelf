@@ -9,7 +9,7 @@ class Book(models.Model):
     authors = models.CharField(max_length=200, blank=True)
     publisher = models.CharField(max_length=100, blank=True)
     published_date = models.DateField(blank=True, null=True)
-    description = models.CharField(max_length=3000, blank=True)
+    description = models.CharField(max_length=5000, blank=True)
     isbn10 = models.CharField(max_length=10, null=True, default=None, unique=True, blank=True)
     isbn13 = models.CharField(max_length=13, null=True, default=None, unique=True, blank=True)
     page_count = models.IntegerField(blank=True)
