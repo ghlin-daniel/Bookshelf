@@ -36,6 +36,7 @@
                     <small>
                       Authors: {{ book.authors }}<br/>
                       Publisher: {{ book.publisher }}<br/>
+                      Published Date: {{ book.published_date|date:"Y-m-d" }}<br/>
                       ISBN: {{ book.isbn13 }}<br/>
                       Pages: {{ book.page_count }}<br/>
                     </small>
