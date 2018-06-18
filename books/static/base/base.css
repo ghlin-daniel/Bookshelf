@@ -66,3 +66,15 @@
 .dialog-book-rate-star.active {
   color: #DABC8C;
 }
+
+.reading-progress-r {
+  color: #DABC8C;
+}
+
+.reading-progress-f {
+  color: green;
+}
+
+.reading-progress-a {
+  color: red;
+}

@@ -63,9 +63,9 @@ function updateReadingList(readings) {
   }
 
   var statuses = {
-    "R": "<span class='oi oi-play-circle'></span>",
-    "F": "<span class='oi oi-circle-check'></span>",
-    "A": "<span class='oi oi-circle-x'></span>"
+    "R": "<span class='oi oi-pulse reading-progress-r'></span>",
+    "F": "<span class='oi oi-check reading-progress-f'></span>",
+    "A": "<span class='oi oi-x reading-progress-a'></span>"
   };
 
   for (var index in readings) {
