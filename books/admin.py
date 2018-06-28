@@ -4,7 +4,8 @@ from .models import Book, Reader, Bookshelf, Reading
 
 class BookAdmin(admin.ModelAdmin):
     ordering = ['-id']
-    search_fields = ['title', 'authors']
+    search_fields = ['title', 'subtitle', 'authors']
+    list_display = ('__str__', 'published_date')
 
 
 admin.site.register(Book, BookAdmin)
