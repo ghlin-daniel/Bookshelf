@@ -13,22 +13,20 @@
       <div id="index-list-content">
         {% for book in books %}
           {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
-          <div class="col-2">
+          <div class="col-xl-2">
             <div class="card book-card">
               <div class="card-header index-book-header">
                 <a href="{% url 'books:detail' book.isbn13 %}">
-                  <img class="book-img" src="{{ book.image_url }}">
+                  <img class="rounded mx-auto d-block img-fluid book-img" src="{{ book.image_url }}">
                 </a>
                 <div class="index-book-rate text-center">
-                  {% if book.rate_count > 0 %}
-                    {% for i in "*****" %}
-                      {% if forloop.counter <= book.rate %}
-                        <span class="material-icons index-book-rate-star book-rate-star active">star</span>
-                      {% else %}
-                        <span class="material-icons index-book-rate-star book-rate-star">star_border</span>
-                      {% endif %}
-                    {% endfor %}
-                  {% endif %}
+                  {% for i in "*****" %}
+                    {% if forloop.counter <= book.rate %}
+                      <span class="material-icons index-book-rate-star book-rate-star active">star</span>
+                    {% else %}
+                      <span class="material-icons index-book-rate-star book-rate-star">star_border</span>
+                    {% endif %}
+                  {% endfor %}
                 </div>
               </div>
               <div class="card-body">

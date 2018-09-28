@@ -17,11 +17,11 @@
       <div class="tab-content" id="my-books-list-content">
         {% for book in books %}
           {% if forloop.counter0|divisibleby:"6" %}<div class="row mb-4">{% endif %}
-            <div class="col-2">
+            <div class="col-xl-2">
               <div class="card book-card">
                 <div class="card-header my-book-header">
                   <a class="reading-link" href="#" data-toggle="modal" data-target="#reading-dialog" book-isbn13="{{ book.book.isbn13 }}" remove-url="{% url 'books:remove_book' book.book.isbn13 %}?redirect={{ request.path }}">
-                    <img class="book-img" src="{{ book.book.image_url }}">
+                    <img class="rounded mx-auto d-block img-fluid book-img" src="{{ book.book.image_url }}">
                   </a>
                   <div class="my-book-rate text-center" data-book-isbn="{{ book.book.isbn13 }}" data-my-book-rate="{{ book.rate }}">
                     {% for i in "*****" %}
