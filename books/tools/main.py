@@ -8,7 +8,7 @@ import psycopg2
 
 root = environ.Path(__file__) - 3
 base_path = root()
-env = environ.Env(DEBUG=(bool, False),)
+env = environ.Env(DEBUG=(bool, False), )
 env_path = base_path + '/.envrc'
 environ.Env.read_env(env_path)
 
@@ -20,73 +20,101 @@ def save(db, conn, books):
         if info is None:
             continue
 
-        isbn10 = ''
-        isbn13 = ''
-        isbns = info.get('industryIdentifiers', None)
-        if isbns is not None:
-            for isbn in isbns:
-                if isbn['type'] == 'ISBN_10':
-                    isbn10 = isbn['identifier']
-                elif isbn['type'] == 'ISBN_13':
-                    isbn13 = isbn['identifier']
-
-        if isbn10 == '' and isbn13 == '':
+        bk = parse_book(info)
+        if bk is None:
             continue
-
-        title = info.get('title', '')
-        subtitle = info.get('subtitle', '')
-
-        authors = ', '.join(info.get('authors', ''))
-
-        publisher = info.get('publisher', '')
-        published_date = info.get('publishedDate', '')
-        if len(published_date) < 10:
-            continue
-
-        description = ''
-        # description = info.get('description', '')
-        page_count = info.get('pageCount', 0)
-
-        image_links = info.get('imageLinks', None)
-        image_url = image_links.get('thumbnail', '') if image_links is not None else ''
-        if image_url == '':
-            continue
-
-        language = info.get('language', '')
-
-        added_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
 
         if db == "psql":
-            insert = '''INSERT INTO books_book (
-                        title, subtitle, authors, publisher, published_date, description, isbn10, isbn13, page_count,
-                        image_url, language, added_date, verified, verified_date)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
-            try:
-                cur = conn.cursor()
-                cur.execute(insert, (title, subtitle, authors, publisher, published_date, description,
-                                     isbn10, isbn13, page_count, image_url, language, added_date, False, None))
-                conn.commit()
+            if insert_psql(conn, bk):
                 count += 1
-            except (psycopg2.IntegrityError, psycopg2.DataError):
-                conn.rollback()
-                pass
         elif db == "sqlite":
-            insert = '''INSERT INTO books_book (
-                        title, subtitle, authors, publisher, published_date, description, isbn10, isbn13, page_count,
-                        image_url, language, added_date, verified, verified_date)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-            try:
-                conn.execute(insert,
-                             (title, subtitle, authors, publisher, published_date, description,
-                              isbn10, isbn13, page_count, image_url, language, added_date, False, None))
-                conn.commit()
+            if insert_sqlite(conn, bk):
                 count += 1
-            except sqlite3.IntegrityError:
-                pass
         else:
             pass
 
     return count
+
+
+def insert_psql(conn, book):
+    insert = '''INSERT INTO books_book (
+                            title, subtitle, authors, publisher, published_date, description,
+                            isbn10, isbn13, page_count, image_url, language, added_date,
+                            verified, verified_date, rate_count, categories)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'''
+    try:
+        cur = conn.cursor()
+        cur.execute(insert, (
+            book['title'], book['subtitle'], book['authors'], book['publisher'], book['published_date'],
+            book['description'], book['isbn10'], book['isbn13'], book['page_count'], book['image_url'],
+            book['language'], book['added_date'], False, None, 0, book['categories']))
+        conn.commit()
+        return True
+    except (psycopg2.IntegrityError, psycopg2.DataError):
+        conn.rollback()
+        return False
+
+
+def insert_sqlite(conn, book):
+    insert = '''INSERT INTO books_book (
+                            title, subtitle, authors, publisher, published_date, description,
+                            isbn10, isbn13, page_count, image_url, language, added_date,
+                            verified, verified_date, rate_count, categories)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    try:
+        conn.execute(insert, (
+            book['title'], book['subtitle'], book['authors'], book['publisher'], book['published_date'],
+            book['description'], book['isbn10'], book['isbn13'], book['page_count'], book['image_url'],
+            book['language'], book['added_date'], False, None, 0, book['categories']))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False
+
+
+def parse_book(info):
+    book = {}
+
+    isbn10 = ''
+    isbn13 = ''
+    isbns = info.get('industryIdentifiers', None)
+    if isbns is not None:
+        for isbn in isbns:
+            if isbn['type'] == 'ISBN_10':
+                isbn10 = isbn['identifier']
+            elif isbn['type'] == 'ISBN_13':
+                isbn13 = isbn['identifier']
+
+    if isbn10 == '' and isbn13 == '':
+        return None
+
+    book['isbn10'] = isbn10
+    book['isbn13'] = isbn13
+
+    book['title'] = info.get('title', '')
+    book['subtitle'] = info.get('subtitle', '')
+
+    book['authors'] = ', '.join(info.get('authors', ''))
+
+    book['publisher'] = info.get('publisher', '')
+    book['published_date'] = info.get('publishedDate', '')
+    if len(book['published_date']) < 10:
+        return None
+
+    book['description'] = info.get('description', '')
+    book['page_count'] = info.get('pageCount', 0)
+
+    image_links = info.get('imageLinks', None)
+    book['image_url'] = image_links.get('thumbnail', '') if image_links is not None else ''
+    if book['image_url'] == '':
+        return None
+
+    book['categories'] = ', '.join(info.get('categories', ''))
+
+    book['language'] = info.get('language', '')
+    book['added_date'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+
+    return book
 
 
 def get_arguments():
@@ -117,7 +145,7 @@ def main():
     count_inserted = 0
 
     while count_fetched <= total:
-        data = fetcher.fetch(query, count_fetched)
+        data = fetcher.fetch(query, count_fetched, env('GOOGLE_BOOKS_API_KEY'))
         books = data.get('items', None)
         if books is None:
             break

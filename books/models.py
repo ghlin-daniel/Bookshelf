@@ -15,6 +15,7 @@ class Book(models.Model):
     page_count = models.IntegerField(blank=True)
     image_url = models.URLField(blank=True)
     language = models.CharField(max_length=10, blank=True)
+    categories = models.CharField(max_length=50, blank=True)
     added_date = models.DateField(blank=True, null=True)
     verified = models.BooleanField(default=False)
     verified_date = models.DateField(blank=True, null=True)
