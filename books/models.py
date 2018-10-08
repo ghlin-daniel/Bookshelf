@@ -15,7 +15,7 @@ class Book(models.Model):
     page_count = models.IntegerField(blank=True)
     image_url = models.URLField(blank=True)
     language = models.CharField(max_length=10, blank=True)
-    categories = models.CharField(max_length=50, blank=True)
+    categories = models.CharField(max_length=100, blank=True)
     added_date = models.DateField(blank=True, null=True)
     verified = models.BooleanField(default=False)
     verified_date = models.DateField(blank=True, null=True)
@@ -24,6 +24,10 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title + " by " + self.authors
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
 
 
 class Reader(models.Model):
