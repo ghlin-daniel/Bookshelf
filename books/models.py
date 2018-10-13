@@ -17,6 +17,7 @@ class Book(models.Model):
     language = models.CharField(max_length=10, blank=True)
     categories = models.CharField(max_length=100, blank=True)
     added_date = models.DateField(blank=True, null=True)
+    updated_date = models.DateField(blank=True, null=True)
     verified = models.BooleanField(default=False)
     verified_date = models.DateField(blank=True, null=True)
     rate = models.FloatField(blank=True, null=True, validators=[MinValueValidator(1), MaxValueValidator(5)])

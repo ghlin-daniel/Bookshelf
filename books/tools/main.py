@@ -14,8 +14,9 @@ environ.Env.read_env(env_path)
 
 
 def save(db, conn, books):
-    count_book = 0
-    count_category = 0
+    count_book_inserted = 0
+    count_book_updated = 0
+    count_category_inserted = 0
     for book in books:
         info = book.get('volumeInfo', None)
         if info is None:
@@ -24,19 +25,24 @@ def save(db, conn, books):
         bk, categories = parse_book(info)
         if categories is not None:
             for category in categories:
-                count_category += 1 if insert_category_psql(conn, category) else 0
+                if insert_category_psql(conn, category):
+                    count_category_inserted += 1
 
         if bk is None:
             continue
 
         if db == "psql":
-            count_book += 1 if insert_book_psql(conn, bk) else 0
+            if insert_book_psql(conn, bk):
+                count_book_inserted += 1
+            elif update_book_psql(conn, bk):
+                count_book_updated += 1
         elif db == "sqlite":
-            count_book += 1 if insert_book_sqlite(conn, bk) else 0
+            if insert_book_sqlite(conn, bk):
+                count_book_inserted += 1
         else:
             pass
 
-    return count_book, count_category
+    return count_book_inserted, count_book_updated, count_category_inserted
 
 
 def insert_book_psql(conn, book):
@@ -50,7 +56,25 @@ def insert_book_psql(conn, book):
         cur.execute(insert, (
             book['title'], book['subtitle'], book['authors'], book['publisher'], book['published_date'],
             book['description'], book['isbn10'], book['isbn13'], book['page_count'], book['image_url'],
-            book['language'], book['added_date'], False, None, 0, book['categories']))
+            book['language'], book['added_date'], True, book['verified_date'], 0, book['categories']))
+        conn.commit()
+        return True
+    except (psycopg2.IntegrityError, psycopg2.DataError):
+        conn.rollback()
+        return False
+
+
+def update_book_psql(conn, book):
+    insert = '''UPDATE books_book SET
+                            title = %s, subtitle = %s, authors = %s, publisher = %s, published_date = %s,
+                            description = %s, language = %s, categories = %s, updated_date = %s
+                            WHERE isbn13 = %s'''
+    try:
+        cur = conn.cursor()
+        cur.execute(insert, (
+            book['title'], book['subtitle'], book['authors'], book['publisher'], book['published_date'],
+            book['description'], book['language'], book['categories'], book['updated_date'],
+            book['isbn13']))
         conn.commit()
         return True
     except (psycopg2.IntegrityError, psycopg2.DataError):
@@ -80,7 +104,7 @@ def insert_book_sqlite(conn, book):
         conn.execute(insert, (
             book['title'], book['subtitle'], book['authors'], book['publisher'], book['published_date'],
             book['description'], book['isbn10'], book['isbn13'], book['page_count'], book['image_url'],
-            book['language'], book['added_date'], False, None, 0, book['categories']))
+            book['language'], book['added_date'], True, book['verified_date'], 0, book['categories']))
         conn.commit()
         return True
     except sqlite3.IntegrityError:
@@ -133,7 +157,11 @@ def parse_book(info):
         return None, categories
 
     book['language'] = info.get('language', '')
-    book['added_date'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+
+    today = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    book['added_date'] = today
+    book['verified_date'] = today
+    book['updated_date'] = today
 
     return book, categories
 
@@ -163,8 +191,9 @@ def main():
 
     total = 0
     count_fetched = 0
-    count_book_inserted = 0
-    count_category_inserted = 0
+    total_count_book_inserted = 0
+    total_count_book_updated = 0
+    total_count_category_inserted = 0
 
     while count_fetched <= total:
         data = fetcher.fetch(query, count_fetched, env('GOOGLE_BOOKS_API_KEY'))
@@ -172,16 +201,18 @@ def main():
         if books is None:
             break
 
-        count_book, count_category = save(db, conn, books)
-        count_book_inserted += count_book
-        count_category_inserted += count_category
+        count_book_inserted, count_book_updated, count_category_inserted = save(db, conn, books)
+        total_count_book_inserted += count_book_inserted
+        total_count_book_updated += count_book_updated
+        total_count_category_inserted += count_category_inserted
         total = data.get('totalItems', 0)
         count_fetched += len(books)
         print(str(count_fetched) + ' / ' + str(total))
 
     conn.close()
-    print(str(count_book_inserted) + " books inserted!")
-    print(str(count_category_inserted) + " categories inserted!")
+    print(str(total_count_book_inserted) + " books inserted!")
+    print(str(total_count_book_updated) + " books updated!")
+    print(str(total_count_category_inserted) + " categories inserted!")
 
 
 if __name__ == "__main__":
